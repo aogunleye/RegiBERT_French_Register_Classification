@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
-<p align="center"><a href="https://your-demo-url.com">Live interactive 3D projection</a></p>
+<p align="center"><a href="#">Live interactive 3D projection</a></p>
 
 ---
 
@@ -303,7 +303,7 @@ pip install -r dependencies.txt
 
 ### Live Bluesky streaming
 
-> **Live Demo:** Try the deployed web application at **[your-demo-url.com](https://your-demo-url.com)**
+> **Live Demo:** Try the deployed web application at **[#](#)**
 
 To run the full streaming pipeline locally:
 
