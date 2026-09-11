@@ -10,10 +10,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
-<p align="center">
-  <a href="https://your-demo-url.com"><strong>🌐 Live interactive 3D projection</strong></a> | 
-  <a href="./README_FR.md">🇫🇷 <strong>Version française</strong></a>
-</p>
+<p align="center"><a href="https://your-demo-url.com">Live interactive 3D projection</a></p>
 
 ---
 
@@ -31,7 +28,7 @@ The computational analysis of stylistic variations almost systematically hits th
 Beyond the predictive task, this work integrates a Mechanistic Interpretability dimension. Through layer-wise probing across the transformer's attention layers ([Tenney et al., 2019](#ref-tenney2019)), we isolate the optimal depth where the topology of the registers crystallizes most clearly. The vector representations from this layer are then extracted and projected into a 3D space using UMAP ([McInnes et al., 2018](#ref-mcinnes2018)).
 
 To achieve this, the project explores four main steps :
-First, register classification is modeled as a continuous Label Distribution Learning task instead of using hard labels. Second, layer-wise probing locates where stylistic features crystallize within the transformer. Third, the sample size for UMAP trustworthiness is estimated using the Central Limit Theorem. Finally, a real-time pipeline projects live Bluesky streams into the calibrated 3D space.
+First, register classification is modeled as a continuous Label Distribution Learning task instead of using hard labels. Second, layer-wise probing locates where stylistic features crystallize within the transformer. Third, the sample size for UMAP trustworthiness is estimated using the Central Limit Theorem. Finally, a live pipeline projects live Bluesky streams into the calibrated 3D space.
 
 This document details the entire methodology, ensuring full reproducibility.
 
@@ -178,9 +175,9 @@ The final projection uses UMAP with 3 output dimensions, cosine similarity as th
 
 ---
 
-## 8. Real-time application: pipeline and visualization
+## 8. live application: pipeline and visualization
 
-RegiBERT was also deployed in a real-time pipeline:
+RegiBERT was also deployed in a live pipeline:
 - The backend consumes the French language Bluesky firehose via the `atproto` library, runs inference under FastAPI, and streams predictions to the client over WebSocket.
 - The frontend renders the resulting point cloud in 3D via Three.js (WebGL), with dynamic filters per register and navigation to the original Bluesky post on double-click. 
 
@@ -304,7 +301,7 @@ pip install -r dependencies.txt
 
 *For live interactive testing without local setup, open [`inference.ipynb`](https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb) directly in Google Colab.*
 
-### Real-time Bluesky streaming
+### Live Bluesky streaming
 
 > **Live Demo:** Try the deployed web application at **[your-demo-url.com](https://your-demo-url.com)**
 
