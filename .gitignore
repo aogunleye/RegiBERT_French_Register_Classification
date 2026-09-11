@@ -1,0 +1,26 @@
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Virtual Environment
+env/
+venv/
+ENV/
+
+# Data & Heavy Files (Ignored on GitHub)
+data/
+checkpoints/*.pt
+checkpoints/*.joblib
+
+# Temporary test/logs
+resultats_ph1.txt
+resultats_ph2.txt
+
+# OS / IDE specific
+.DS_Store
+.vscode/
+.idea/
+
+plots.py

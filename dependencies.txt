@@ -1,0 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+transformers
+pandas
+numpy
+scikit-learn
+umap-learn
+joblib
+fastapi
+uvicorn[standard]
+websockets
+atproto

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tremolo 3D — Registres de Langue en Direct</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons">
+  
+  <!-- Importation de Three.js et OrbitControls via CDN ESM -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Canvas WebGL pour Three.js -->
+  <div id="canvas-container"></div>
+
+  <!-- HUD / Panneau de contrôle overlay -->
+  <div id="hud">
+    <header class="hud-header">
+      <h1>RegiBERT 3D</h1>
+      <div id="status-badge" class="badge connecting">
+        <span class="dot"></span>
+        <span id="status-text">Connexion...</span>
+      </div>
+    </header>
+
+    <!-- Panneau d'informations du post (au survol ou dernier post reçu) -->
+    <div id="card" class="card hidden">
+      <div class="card-header">
+        <span id="post-id" class="post-id">#000000</span>
+        <span id="post-type" class="post-type">Live Stream</span>
+      </div>
+      <p id="post-text" class="post-text">Survolez un point ou attendez un nouveau post...</p>
+      
+      <!-- Barres de probabilités -->
+      <div class="probs-container">
+        <div class="prob-row">
+          <span class="label">Soutenu</span>
+          <div class="bar-bg"><div id="bar-soutenu" class="bar soutenu" style="width: 0%"></div></div>
+          <span id="val-soutenu" class="val">0%</span>
+        </div>
+        <div class="prob-row">
+          <span class="label">Courant</span>
+          <div class="bar-bg"><div id="bar-courant" class="bar courant" style="width: 0%"></div></div>
+          <span id="val-courant" class="val">0%</span>
+        </div>
+        <div class="prob-row">
+          <span class="label">Familier</span>
+          <div class="bar-bg"><div id="bar-familier" class="bar familier" style="width: 0%"></div></div>
+          <span id="val-familier" class="val">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
