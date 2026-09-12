@@ -1,16 +1,6 @@
 
 # <center>RegiBERT: Continuous Modeling of French Linguistic Registers via Label Distribution Learning, Linear Probing and UMAP Projection</center>
 
-<style>
-  .text-main { fill: #24292f; }
-  .box-bg { fill: #f6f8fa; stroke: #d0d7de; }
-
-  @media (prefers-color-scheme: dark) {
-    .text-main { fill: #f0f6fc; }
-    .box-bg { fill: #161b22; stroke: #30363d; }
-  }
-</style>
-
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11.9-3776AB?logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch" />
