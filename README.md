@@ -3,10 +3,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11.9-3776AB?logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch" />
+  <img src="https://img.shields.io/badge/PyTorch-2.5.1-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch" />
   <img src="https://img.shields.io/badge/Backbone-CamemBERT--base-FFD21E?logo=huggingface&logoColor=black" alt="CamemBERT" />
-  <img src="https://img.shields.io/badge/Task-Label%20Distribution%20Learning-008080" alt="Task" />
-  <img src="https://img.shields.io/badge/Data-TREMoLo--Tweets-purple" alt="Dataset" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
