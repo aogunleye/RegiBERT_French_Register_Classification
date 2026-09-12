@@ -82,7 +82,6 @@ def interpolate_layer(xy: np.ndarray, values: np.ndarray, grid_res: int):
 
 def draw_layer(ax, xy: np.ndarray, values: np.ndarray, layer: int, tokens: list,
                vmin: float, vmax: float, grid_res: int):
-    ax.patch.set_alpha(0.0)
     norm = TwoSlopeNorm(vmin=vmin, vcenter=90.0, vmax=vmax)
     try:
         x_grid, y_grid, z_grid = interpolate_layer(xy, values, grid_res)
@@ -124,7 +123,6 @@ def build_landscape(text: str, tokenizer, model, device,
     cols = min(2, len(valid_layers))
     rows = int(np.ceil(len(valid_layers) / cols))
     fig, axes = plt.subplots(rows, cols, figsize=(6.5 * cols, 5.2 * rows), squeeze=False)
-    fig.patch.set_alpha(0.0)
 
     last_image = None
     for ax, layer in zip(axes.ravel(), valid_layers):
@@ -139,7 +137,7 @@ def build_landscape(text: str, tokenizer, model, device,
 
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(output_path, dpi=300, bbox_inches="tight", transparent=True)
+        fig.savefig(output_path, dpi=300, bbox_inches="tight", transparent=False)
         print(f"Saved {output_path}")
 
     return fig
