@@ -114,7 +114,7 @@ For each layer $L \in [0, 12]$, the 768D representation is extracted for each tw
 **Results:**
 
 <p align="center">
-  <img src="probing_r2.png" alt="Layer-wise Probing R2 Score" width="85%" />
+  <img src="images/probing_r2.png" alt="Layer-wise Probing R2 Score" width="85%" />
 </p>
 <p align="center">
   <i><b>Figure 3:</b> Linear probing $R^2$ scores across CamemBERT-base layers</i>
@@ -182,10 +182,10 @@ $\rightarrow$ layer normalization, another non-linear rescaling.
 Stacking 12 such layers therefore traces a [discrete](https://en.wikipedia.org/wiki/Discrete_geometry) [geodesic](https://en.wikipedia.org/wiki/Geodesic)-like path through a manifold whose curvature is itself shaped by training, since gradient descent adjusts $W^Q$ and $W^K$ to minimize an effective "action" combining this transport cost with the training loss. This is formally the same variational logic that yields Einstein's field equations from the Einstein–Hilbert action. Only a non-linear reduction method can faithfully unfold such a trajectory into 3 dimensions.
 
 <p align="center">
-  <img src="curvature_landscape.png" alt="CamemBERT Curvature Landscape" width="95%" />
+  <img src="images/curvature_landscape.png" alt="CamemBERT Curvature Landscape" width="95%" />
 </p>
 <p align="center">
-  <i><b>Figure 5:</b> 2D contextual curvature landscape across representative CamemBERT layers for a sample TrémoLo tweet. Token positions are projected onto a shared PCA plane, with colors encoding contextual turning angles ($\theta_i$): blue regions indicate linear trajectory motion ($\theta < 90^\circ$), whereas red regions highlight high curvature ($\theta > 90^\circ$) where contextual attention actively bends representation vectors.</i>
+  <i><b>Figure 4:</b> 2D contextual curvature landscape across representative CamemBERT layers for a sample TrémoLo tweet. Token positions are projected onto a shared PCA plane, with colors encoding contextual turning angles ($\theta_i$): blue regions indicate linear trajectory motion ($\theta < 90^\circ$), whereas red regions highlight high curvature ($\theta > 90^\circ$) where contextual attention actively bends representation vectors.</i>
 </p>
 
 ### 6.4 Justification of the sample size for trustworthiness evaluation
@@ -288,7 +288,7 @@ Looking past the mathematical metrics from Section 8, the UMAP point cloud visua
   <img src="images/umap_projection_static.png" alt="Static 3D UMAP Projection" width="90%" />
 </p>
 <p align="center">
-  <i><b>Figure 6:</b> Static rendering of the calibrated 3D UMAP manifold (validation split, 45,654 points)</i>
+  <i><b>Figure 5:</b> Static rendering of the calibrated 3D UMAP manifold (validation split, 45,654 points)</i>
 </p>
 
 Instead of breaking into isolated islands, the data forms a continuous cloud. This fluidity reflects Biber’s ([1988](#ref-biber1988)) functional dimensions and Koch & Oesterreicher’s ([1985](#ref-koch1985)) continuum between spontaneous and elaborated discourse. The large, blended areas in the middle also perfectly illustrate Gadet’s ([2007](#ref-gadet2007)) concept of permanent hybridization, showing that everyday language rarely stays within exclusive boxes.
