@@ -45,13 +45,13 @@ Beyond the predictive task, this work integrates a Mechanistic Interpretability 
 To achieve this, the project explores four main steps :
 First, register classification is modeled as a continuous Label Distribution Learning task instead of using hard labels. Second, layer-wise probing locates where stylistic features crystallize within the transformer. Third, the sample size for UMAP trustworthiness is estimated using the Central Limit Theorem. Finally, a live pipeline projects live Bluesky streams into the calibrated 3D space.
 
-This document details the entire methodology, ensuring full reproducibility.
+This document details the entire methodology, ensuring full reproducibility (see Section 12 for a quick start).
 
 <p align="center">
   <img src="images/overview.svg" alt="overview" width="100%" />
 </p>
 <p align="center">
-  <i><b>Figure 1:</b> End-to-end architecture of RegiBERT</i>
+  <i><b>Figure 1:</b> End-to-end architecture of the project</i>
 </p>
 
 ***A quick note on linguistic terminology:*** *While the dataset and some parts of code retain French variables, the mapping below translates these terms into English for readability:*
