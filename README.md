@@ -173,7 +173,7 @@ Stacking 12 such layers therefore traces a [discrete](https://en.wikipedia.org/w
   <img src="images/curvature_landscape.png" alt="CamemBERT Curvature Landscape" width="95%" />
 </p>
 <p align="center">
-  <i><b>Figure 4:</b> 2D contextual curvature landscape across representative CamemBERT layers for a sample TrémoLo tweet. Token positions are projected onto a shared PCA plane, with colors encoding contextual turning angles ($\theta_i$): blue regions indicate linear trajectory motion ($\theta < 90^\circ$), whereas red regions highlight high curvature ($\theta > 90^\circ$) where contextual attention actively bends representation vectors.</i>
+  <i><b>Figure 4:</b> 2D contextual curvature landscape across representative CamemBERT layers for a sample TrémoLo tweet. Token positions are projected onto a shared PCA plane, with colors encoding contextual turning angles ($\theta_i$): blue regions indicate linear trajectory motion ($\theta$ < 90°), whereas red regions highlight high curvature ($\theta$ > 90°) where contextual attention actively bends representation vectors.</i>
 </p>
 
 ### 6.4 Justification of the sample size for trustworthiness evaluation
