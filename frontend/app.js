@@ -4,7 +4,6 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-// --- Configuration & Variables Globales ---
 const WS_URL = 'ws://127.0.0.1:8000/ws';
 const MAX_LIVE_POSTS = 500;
 
@@ -16,10 +15,10 @@ let boundingGroup = null;
 let raycaster, mouse;
 let ws;
 
+// posts and static points memory
 let livePostsData = [];
-let globalStaticPoints = []; // Gardé en mémoire pour les connexions neuronales
+let globalStaticPoints = [];
 
-// Éléments DOM HUD (existants)
 const statusBadge = document.getElementById('status-badge');
 const statusText = document.getElementById('status-text');
 const card = document.getElementById('card');
@@ -32,7 +31,7 @@ const valSoutenu = document.getElementById('val-soutenu');
 const valCourant = document.getElementById('val-courant');
 const valFamilier = document.getElementById('val-familier');
 
-// HUD Coordonnées Dynamiques
+// hud dynamic coordinates
 const coordsHUD = document.createElement('div');
 coordsHUD.style.position = 'absolute';
 coordsHUD.style.bottom = '20px';
@@ -45,7 +44,7 @@ coordsHUD.style.opacity = '0.7';
 coordsHUD.style.textAlign = 'right';
 document.body.appendChild(coordsHUD);
 
-// --- Ajout d'un style CSS dynamique pour la scrollbar Cyberpunk ---
+// dynamic css style for scrollbar
 const style = document.createElement('style');
 style.innerHTML = `
   .cyber-scroll::-webkit-scrollbar { width: 6px; }
@@ -55,14 +54,14 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// HUD Informations Projet & Légende (En bas à gauche)
+// HUD project information and legend
 const projectInfoHUD = document.createElement('div');
 projectInfoHUD.style.position = 'absolute';
 projectInfoHUD.style.bottom = '20px';
 projectInfoHUD.style.left = '20px';
 projectInfoHUD.style.color = '#cbd5e1'; 
 projectInfoHUD.style.fontFamily = 'monospace';
-projectInfoHUD.style.pointerEvents = 'auto'; // Active le clic sur les liens
+projectInfoHUD.style.pointerEvents = 'auto';
 projectInfoHUD.style.background = 'rgba(2, 4, 8, 0.75)';
 projectInfoHUD.style.padding = '18px';
 projectInfoHUD.style.border = '1px solid #334155';
@@ -116,12 +115,12 @@ projectInfoHUD.innerHTML = `
   </div>
 `;
 
-// Empêche la molette de la souris de zoomer la caméra quand on défile le texte du panneau
+// prevents mouse wheel from zooming cam when scrolling panel text
 projectInfoHUD.addEventListener('wheel', (e) => e.stopPropagation());
 
 document.body.appendChild(projectInfoHUD);
 
-// HUD Filtres Dynamiques (Boutons Holographiques)
+// dynamic filter
 const filtersHUD = document.createElement('div');
 filtersHUD.style.position = 'absolute';
 filtersHUD.style.top = '20px';
@@ -163,7 +162,8 @@ filtersHUD.appendChild(createFilterButton('COURANT', '#2563eb', 'courant'));
 filtersHUD.appendChild(createFilterButton('FAMILIER', '#10b981', 'familier'));
 
 
-// --- 1. Initialisation de la scène ---
+// ----------------------------------------------------
+//  initializing the scene
 function initScene() {
   const container = document.getElementById('canvas-container');
 
@@ -180,16 +180,13 @@ function initScene() {
   renderer.useLegacyLights = false; 
   container.appendChild(renderer.domElement);
 
-  // --- POST-PROCESSING (UNREAL BLOOM) ---
   const renderScene = new RenderPass(scene, camera);
-  // (Resolution, Strength, Radius, Threshold)
   const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.5, 0.5);
   
   composer = new EffectComposer(renderer);
   composer.addPass(renderScene);
   composer.addPass(bloomPass);
 
-  // --- ÉCLAIRAGE CYBERPUNK ---
   const ambientLight = new THREE.AmbientLight(0x0f172a, 1.5);
   scene.add(ambientLight);
   const neonRed = new THREE.PointLight(0xdc2626, 200, 100); neonRed.position.set(10, 0, 0); scene.add(neonRed);
@@ -228,7 +225,7 @@ function createCoordSprite(text, x, y, z) {
   return sprite;
 }
 
-// --- 2. Création de la Constellation UMAP filtrable ---
+// creating filterable umap cloud
 function createSubCloud(arr) {
   const positions = new Float32Array(arr.length * 3);
   const colors = new Float32Array(arr.length * 3);
@@ -248,7 +245,6 @@ function createSubCloud(arr) {
 function createBackgroundCloud(pointsData) {
     const countSpan = document.getElementById('static-count');
   if (countSpan) {
-    // Formate le nombre avec un espace pour les milliers (ex: 45 128)
     countSpan.textContent = new Intl.NumberFormat('fr-FR').format(pointsData.length);
   }
   if (pointsSoutenuMesh) scene.remove(pointsSoutenuMesh, pointsCourantMesh, pointsFamilierMesh);
@@ -263,7 +259,6 @@ function createBackgroundCloud(pointsData) {
     allPositions.push(p[0], p[1], p[2]);
     let r = p[3] || 0.2, g = p[4] || 0.25, b = p[5] || 0.3;
     
-    // Répartition dans les 3 groupes pour permettre le filtrage
     if (r > g && r > b) arrS.push(p);
     else if (b > r && b > g) arrC.push(p);
     else arrF.push(p);
@@ -277,7 +272,7 @@ function createBackgroundCloud(pointsData) {
   scene.add(pointsCourantMesh);
   scene.add(pointsFamilierMesh);
 
-  // Construction du cube basé sur tous les points
+  // creates the box
   const dummyGeo = new THREE.BufferGeometry();
   dummyGeo.setAttribute('position', new THREE.Float32BufferAttribute(allPositions, 3));
   dummyGeo.computeBoundingBox();
@@ -312,7 +307,7 @@ function createBackgroundCloud(pointsData) {
   dummyGeo.dispose();
 }
 
-// --- 4. Posts en direct & Nettoyage FIFO ---
+//  live posts and fifo cleanup
 function addLivePostMarker(postData) {
   if (livePostsData.length >= MAX_LIVE_POSTS) {
     const oldestMarker = livePostsData.shift();
@@ -325,14 +320,13 @@ function addLivePostMarker(postData) {
   const [r, g, b] = postData.rgb;
   const color = new THREE.Color(`rgb(${r}, ${g}, ${b})`);
 
-  // Rayon divisé par 2 (0.35 -> 0.175)
   const geometry = new THREE.SphereGeometry(0.175, 32, 32); 
   const material = new THREE.MeshStandardMaterial({ 
     color: color,
     roughness: 0.2,
     metalness: 0.8,
     emissive: color,
-    emissiveIntensity: 1.2 // Forte intensité pour déclencher le Bloom
+    emissiveIntensity: 1.2
   });
 
   const marker = new THREE.Mesh(geometry, material);
@@ -342,7 +336,7 @@ function addLivePostMarker(postData) {
   scene.add(marker);
   livePostsData.push(marker);
 
-  // Onde de choc divisée par 2
+
   const ringGeo = new THREE.RingGeometry(0.2, 0.3, 32);
   const ringMat = new THREE.MeshBasicMaterial({
     color: color, side: THREE.DoubleSide, transparent: true, opacity: 1
@@ -364,7 +358,6 @@ function addLivePostMarker(postData) {
     }
   }, 30);
 
-    // Mise à jour du compteur live intégré au panneau
     const liveCountSpan = document.getElementById('live-count');
     if (liveCountSpan) {
         liveCountSpan.textContent = livePostsData.length;
@@ -373,7 +366,7 @@ function addLivePostMarker(postData) {
     updateHUDCard(postData);
 }
 
-// --- 5. WebSocket ---
+// websocket
 function connectWebSocket() {
   ws = new WebSocket(WS_URL);
   ws.onopen = () => { statusBadge.className = 'badge connected'; statusText.textContent = 'En direct'; };
@@ -391,37 +384,33 @@ function connectWebSocket() {
   ws.onerror = (err) => { ws.close(); };
 }
 
-// --- 6. Interaction & HUD ---
+// interaction and hud
 function updateHUDCard(data) {
   if (!data) return;
   
   card.classList.remove('hidden');
 
-  // 1. Formatage de la date et de l'heure
+  // formating date
   let dateText = "";
   if (data.created_at) {
     const d = new Date(data.created_at);
-    // Exemple de rendu : "7 sept. 2026 à 14:30"
-    dateText = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) + 
+    dateText = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + 
                ' à ' + 
                d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
 
-  // 2. Raccourcir l'ID de l'auteur (qui est souvent un long "did:plc:xxx...")
   const shortAuthor = data.author ? data.author.replace('did:plc:', '').substring(0, 8) + '...' : 'anonyme';
 
-  // 3. Injection d'un en-tête stylisé directement dans la balise postIdEl
-  postIdEl.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px; font-family: monospace;">
-      <span style="color: #0ea5e9; font-weight: bold;">@${shortAuthor}</span>
-      <span style="color: #94a3b8; font-size: 0.85em;">${dateText}</span>
-    </div>
-  `;
+  const postIdEl = document.getElementById('post-id');
+  const postTypeEl = document.getElementById('post-type');
   
-  // 4. Le texte du post
+  if (postIdEl) postIdEl.textContent = `@${shortAuthor}`;
+  if (postTypeEl) postTypeEl.textContent = dateText;
+  
+  // post text
   postTextEl.textContent = `"${data.text}"`;
 
-  // 5. Mise à jour des barres de probabilités
+  // probabilities
   const pSoutenu = Math.round(data.probs.soutenu * 100);
   const pCourant = Math.round(data.probs.courant * 100);
   const pFamilier = Math.round(data.probs.familier * 100);
@@ -452,14 +441,14 @@ function checkIntersections() {
   }
 }
 
-// Redirection Bluesky au Double-Clic
+// Bluesky redirect on double click
 function onDoubleClick(event) {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(livePostsData);
   if (intersects.length > 0) {
     const data = intersects[0].object.userData;
     
-    // Ouvre le lien exact si disponible, sinon fallback sur la recherche
+    // opens link if available or otherwise search
     if (data.url) {
       window.open(data.url, '_blank');
     } else {
@@ -473,7 +462,7 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize(window.innerWidth, window.innerHeight); // Maj du filtre Bloom
+  composer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
@@ -483,7 +472,6 @@ function animate() {
   
   coordsHUD.innerHTML = `COORD [CAM]<br>X: ${camera.position.x.toFixed(2)}<br>Y: ${camera.position.y.toFixed(2)}<br>Z: ${camera.position.z.toFixed(2)}`;
 
-  // On utilise le "composer" (Post-Processing) au lieu du renderer standard
   composer.render();
 }
 
