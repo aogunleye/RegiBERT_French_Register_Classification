@@ -67,7 +67,7 @@ This document details the entire methodology, ensuring full reproducibility (see
 
 **Base model:** `camembert-base` with frozen weights.
 
-**Embedding extraction:** Sentence representations are obtained via attention-mask-weighted mean pooling over the last hidden layer, producing a single 768-dimensional vector per tweet.
+**Embedding extraction:** Sentence representations are obtained via attention-mask-weighted mean pooling over the last hidden layer, producing a single 768D vector per tweet.
 
 <p align="center">
   <img src="images/pooling.svg" alt="Attention-Masked Mean Pooling" width="100%" />
