@@ -34,7 +34,6 @@ body {
   z-index: 1;
 }
 
-
 #hud {
   position: absolute;
   top: 0;
@@ -233,8 +232,13 @@ h1 {
 }
 
 @media (max-width: 800px) {
+  .hud-header {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
   #filters-hud {
-    top: 75px !important;
+    top: 65px !important;
     width: 100% !important;
     justify-content: center !important;
     gap: 8px !important;
@@ -245,20 +249,47 @@ h1 {
     padding: 6px 10px !important;
   }
 
+  #project-info {
+    width: calc(100% - 32px) !important;
+    left: 16px !important;
+    bottom: auto !important;
+    top: 110px !important;
+    max-height: 40vh !important;
+    padding: 12px !important;
+    transform: translateX(-120vw) !important;
+    opacity: 0 !important;
+    transition: transform 0.3s ease, opacity 0.3s ease !important;
+    pointer-events: none !important;
+  }
+
+  #project-info.mobile-open {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
   .card {
     width: calc(100% - 32px) !important;
     left: 16px !important;
     right: 16px !important;
     top: auto !important;
     bottom: 16px !important;
-    transform: translateY(0) !important;
+    transform: translateX(120vw) !important;
     min-height: auto !important;
     max-height: 220px !important;
     padding: 12px 16px !important;
+    opacity: 0 !important;
+    transition: transform 0.3s ease, opacity 0.3s ease !important;
   }
 
+  .card.mobile-open {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+  }
+  
   .card.hidden {
-    transform: translateY(150%) !important;
+    transform: translateX(120vw) !important;
+    opacity: 0 !important;
   }
   
   .post-text {
@@ -270,7 +301,10 @@ h1 {
   }
   
   .waiting-message {
-    bottom: 50% !important;
-    width: 85% !important;
+    bottom: 12px !important;
+    width: auto !important;
+    font-size: 10px !important;
+    padding: 6px 12px !important;
+    white-space: nowrap;
   }
 }

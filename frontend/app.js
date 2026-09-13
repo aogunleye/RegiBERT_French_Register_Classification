@@ -7,10 +7,10 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 let WS_URL;
 
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    WS_URL = "ws://localhost:8000/ws";
+  WS_URL = "ws://localhost:8000/ws";
 } 
 else {
-    WS_URL = "wss://p01--regibert--ybpp4jlb5k9w.code.run/ws";
+  WS_URL = "wss://p01--regibert--ybpp4jlb5k9w.code.run/ws";
 }
 
 const MAX_LIVE_POSTS = 500;
@@ -23,7 +23,6 @@ let boundingGroup = null;
 let raycaster, mouse;
 let ws;
 
-// posts and static points memory
 let livePostsData = [];
 let globalStaticPoints = [];
 
@@ -39,7 +38,6 @@ const valSoutenu = document.getElementById('val-soutenu');
 const valCourant = document.getElementById('val-courant');
 const valFamilier = document.getElementById('val-familier');
 
-// hud dynamic coordinates
 const coordsHUD = document.createElement('div');
 coordsHUD.id = 'coords-hud';
 coordsHUD.style.position = 'absolute';
@@ -53,7 +51,6 @@ coordsHUD.style.opacity = '0.7';
 coordsHUD.style.textAlign = 'right';
 document.body.appendChild(coordsHUD);
 
-// dynamic css style for scrollbar
 const style = document.createElement('style');
 style.innerHTML = `
   .cyber-scroll::-webkit-scrollbar { width: 6px; }
@@ -63,7 +60,6 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// HUD project information and legend
 const projectInfoHUD = document.createElement('div');
 projectInfoHUD.id = 'project-info';
 projectInfoHUD.style.color = '#cbd5e1'; 
@@ -85,7 +81,6 @@ projectInfoHUD.innerHTML = `
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
-      <!-- LIEN GITHUB -->
       <a href="https://github.com/aogunleye" target="_blank" title="Voir le code source sur GitHub">
         <img src="github.png" alt="GitHub" style="width: 28px; height: 28px; opacity: 0.7; transition: 0.3s;" 
              onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 5px #0ea5e9)';" 
@@ -124,10 +119,8 @@ projectInfoHUD.innerHTML = `
   </div>
 `;
 
-// prevents mouse wheel from zooming cam when scrolling panel text
 projectInfoHUD.addEventListener('wheel', (e) => e.stopPropagation());
 
-// dynamic filter
 const filtersHUD = document.createElement('div');
 filtersHUD.id = 'filters-hud';
 filtersHUD.style.display = 'flex';
@@ -165,12 +158,14 @@ filtersHUD.appendChild(createFilterButton('COURANT', '#2563eb', 'courant'));
 filtersHUD.appendChild(createFilterButton('FAMILIER', '#10b981', 'familier'));
 
 const hudFlow = document.getElementById('hud-flow');
-hudFlow.appendChild(filtersHUD);
-hudFlow.appendChild(projectInfoHUD);
+if (hudFlow) {
+  hudFlow.appendChild(filtersHUD);
+  hudFlow.appendChild(projectInfoHUD);
+} else {
+  document.body.appendChild(filtersHUD);
+  document.body.appendChild(projectInfoHUD);
+}
 
-
-// ----------------------------------------------------
-//  initializing the scene
 function initScene() {
   const container = document.getElementById('canvas-container');
 
@@ -232,7 +227,6 @@ function createCoordSprite(text, x, y, z) {
   return sprite;
 }
 
-// creating filterable umap cloud
 function createSubCloud(arr) {
   const positions = new Float32Array(arr.length * 3);
   const colors = new Float32Array(arr.length * 3);
@@ -279,7 +273,6 @@ function createBackgroundCloud(pointsData) {
   scene.add(pointsCourantMesh);
   scene.add(pointsFamilierMesh);
 
-  // creates the box
   const dummyGeo = new THREE.BufferGeometry();
   dummyGeo.setAttribute('position', new THREE.Float32BufferAttribute(allPositions, 3));
   dummyGeo.computeBoundingBox();
@@ -314,7 +307,6 @@ function createBackgroundCloud(pointsData) {
   dummyGeo.dispose();
 }
 
-//  live posts and fifo cleanup
 function addLivePostMarker(postData) {
   if (livePostsData.length >= MAX_LIVE_POSTS) {
     const oldestMarker = livePostsData.shift();
@@ -342,7 +334,6 @@ function addLivePostMarker(postData) {
 
   scene.add(marker);
   livePostsData.push(marker);
-
 
   const ringGeo = new THREE.RingGeometry(0.2, 0.3, 32);
   const ringMat = new THREE.MeshBasicMaterial({
@@ -373,7 +364,6 @@ function addLivePostMarker(postData) {
     updateHUDCard(postData);
 }
 
-// websocket
 function connectWebSocket() {
   ws = new WebSocket(WS_URL);
   ws.onopen = () => { statusBadge.className = 'badge connected'; statusText.textContent = 'En direct'; };
@@ -391,11 +381,9 @@ function connectWebSocket() {
   ws.onerror = (err) => { ws.close(); };
 }
 
-// interaction and hud
 function updateHUDCard(data) {
   if (!data) return;
   
-  // Ouvre automatiquement la carte uniquement si on est sur PC (écran large)
   if (window.innerWidth > 800) {
     card.classList.remove('hidden');
   }
@@ -404,7 +392,8 @@ function updateHUDCard(data) {
   if (data.created_at) {
     const d = new Date(data.created_at);
     dateText = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + 
-               ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+               ' à ' + 
+               d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
 
   const shortAuthor = data.author ? data.author.replace('did:plc:', '').substring(0, 8) + '...' : 'anonyme';
@@ -442,19 +431,20 @@ function checkIntersections() {
   if (intersects.length > 0) {
     document.body.style.cursor = 'pointer';
     updateHUDCard(intersects[0].object.userData);
+    if (window.innerWidth <= 800) {
+       card.classList.remove('hidden');
+    }
   } else {
     document.body.style.cursor = 'default';
   }
 }
 
-// Bluesky redirect on double click
 function onDoubleClick(event) {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(livePostsData);
   if (intersects.length > 0) {
     const data = intersects[0].object.userData;
     
-    // opens link if available or otherwise search
     if (data.url) {
       window.open(data.url, '_blank');
     } else {
@@ -476,7 +466,9 @@ function animate() {
   controls.update();
   checkIntersections();
   
-  coordsHUD.innerHTML = `COORD [CAM]<br>X: ${camera.position.x.toFixed(2)}<br>Y: ${camera.position.y.toFixed(2)}<br>Z: ${camera.position.z.toFixed(2)}`;
+  if (coordsHUD) {
+    coordsHUD.innerHTML = `COORD [CAM]<br>X: ${camera.position.x.toFixed(2)}<br>Y: ${camera.position.y.toFixed(2)}<br>Z: ${camera.position.z.toFixed(2)}`;
+  }
 
   composer.render();
 }
@@ -484,7 +476,6 @@ function animate() {
 initScene();
 connectWebSocket();
 
-// message d'attente
 const waitingMessage = document.getElementById('waiting-message');
 const countdownSpan = document.getElementById('countdown');
 let countdownValue = 5;
@@ -503,19 +494,35 @@ const startTimer = setInterval(() => {
   }
 }, 1000);
 
-window.addEventListener('pointerdown', (event) => {
-  if (window.innerWidth <= 800) {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(livePostsData);
-    
-    if (intersects.length > 0) {
-      card.classList.remove('hidden');
-      updateHUDCard(intersects[0].object.userData);
-    } else {
-      card.classList.add('hidden');
-    }
-  }
-});
+const infoTab = document.getElementById('info-tab');
+const cardTab = document.getElementById('card-tab');
+const infoClose = document.getElementById('info-close');
+const cardClose = document.getElementById('card-close');
+const projectInfoElement = document.getElementById('project-info');
+
+if (infoTab) {
+  infoTab.addEventListener('click', () => {
+    projectInfoElement.classList.add('mobile-open');
+    card.classList.remove('mobile-open'); 
+  });
+}
+
+if (infoClose) {
+  infoClose.addEventListener('click', () => {
+    projectInfoElement.classList.remove('mobile-open');
+  });
+}
+
+if (cardTab) {
+  cardTab.addEventListener('click', () => {
+    card.classList.remove('hidden');
+    card.classList.add('mobile-open');
+    if (projectInfoElement) projectInfoElement.classList.remove('mobile-open'); 
+  });
+}
+
+if (cardClose) {
+  cardClose.addEventListener('click', () => {
+    card.classList.remove('mobile-open');
+  });
+}
