@@ -1,3 +1,31 @@
+"""
+ONNX-based rewrite of backend/server.py, for lightweight deployment (no
+PyTorch, no CUDA — suitable for Northflank's free tier).
+
+Key differences from backend/server.py:
+  - No torch. Inference runs through onnxruntime via RegiBERTONNX
+    (see inference_onnx.py).
+  - The redundant second forward pass (output_hidden_states=True to fetch
+    hidden_states[best_layer]) has been removed: model.forward()'s own
+    `embeddings` output already IS the mean-pooled last layer, which is
+    hidden_states[12] — and best_layer was found to be 12. If you retrain
+    and best_layer changes, this shortcut breaks; see the warning in
+    inference_onnx.py's predict_with_embedding().
+
+Expected file layout at runtime (see Dockerfile for how this is assembled):
+  /app/config.py
+  /app/backend/__init__.py, /app/backend/stream.py
+  /app/server_onnx.py         (this file)
+  /app/inference_onnx.py
+  /app/checkpoints/regibert.onnx
+  /app/checkpoints/umap_3d.joblib
+Run in production via (from the project root, or see Dockerfile):
+    uvicorn deployment.server_onnx:app --host 0.0.0.0 --port 8000
+(requires deployment/__init__.py to exist, since this file uses a relative
+import for inference_onnx — running "python server_onnx.py" directly will
+NOT work; always launch it as a package through uvicorn as shown above.)
+"""
+
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
@@ -34,9 +62,13 @@ def compute_rgb(probs: dict) -> list:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print("Démarrage du serveur (ONNX Runtime, CPU) ...")
+
     umap_path = Path(config.UMAP_SAVE_PATH)
+    if not umap_path.exists():
+        raise FileNotFoundError(f"UMAP file not found: {umap_path}")
+
     umap_data = joblib.load(umap_path)
-    
     reducer = umap_data["umap_model"]
     static_projections = umap_data["projections"]
     targets = umap_data.get("targets", [])
@@ -46,7 +78,7 @@ async def lifespan(app: FastAPI):
         x = float(np.nan_to_num(static_projections[i][0]))
         y = float(np.nan_to_num(static_projections[i][1]))
         z = float(np.nan_to_num(static_projections[i][2]))
-        
+
         if len(targets) > i:
             target_val = targets[i]
             if isinstance(target_val, np.ndarray) and len(target_val) >= 3:
@@ -57,12 +89,12 @@ async def lifespan(app: FastAPI):
                 p_c = 1.0 if idx == 1 else 0.0
                 p_f = 1.0 if idx == 2 else 0.0
         else:
-            p_s, p_c, p_f = 0.5, 0.5, 0.5 
-            
+            p_s, p_c, p_f = 0.5, 0.5, 0.5
+
         r = (p_s * 0.862) + (p_c * 0.145) + (p_f * 0.063)
         g = (p_s * 0.149) + (p_c * 0.388) + (p_f * 0.725)
         b = (p_s * 0.149) + (p_c * 0.922) + (p_f * 0.506)
-        
+
         static_points.append([x, y, z, r, g, b])
 
     del umap_data
@@ -94,7 +126,6 @@ async def lifespan(app: FastAPI):
     gc.collect()
     yield
 
-    # Arrêt propre
     stream_task.cancel()
     worker_task.cancel()
     MODEL_STATE.clear()
@@ -102,10 +133,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="RegiBERT 3D",
-    description="FastAPI server for live inference and 3D visualization (ONNX)",
+    description="fastapi server for live inference and 3D visualization of Bluesky posts in french (ONNX Runtime)",
     lifespan=lifespan,
 )
 
+# TODO: restrict to your actual frontend origin(s) before/after going live,
+# e.g. ["https://your-username.github.io"], instead of "*".
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
