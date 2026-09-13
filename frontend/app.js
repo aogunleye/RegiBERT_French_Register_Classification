@@ -72,6 +72,10 @@ projectInfoHUD.style.borderRadius = '8px';
 projectInfoHUD.style.backdropFilter = 'blur(6px)';
 projectInfoHUD.style.width = '380px';
 projectInfoHUD.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+projectInfoHUD.style.position = 'absolute';
+projectInfoHUD.style.bottom = '20px';
+projectInfoHUD.style.left = '20px';
+projectInfoHUD.style.zIndex = '50';
 
 projectInfoHUD.innerHTML = `
   <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
@@ -86,7 +90,7 @@ projectInfoHUD.innerHTML = `
              onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 5px #0ea5e9)';" 
              onmouseout="this.style.opacity='0.7'; this.style.filter='none';">
       </a>
-      <button id="info-close" class="panel-close" aria-label="Fermer">×</button>
+      <button id="info-close" class="panel-close" aria-label="Fermer" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
     </div>
   </div>
 
@@ -123,8 +127,13 @@ projectInfoHUD.addEventListener('wheel', (e) => e.stopPropagation());
 
 const filtersHUD = document.createElement('div');
 filtersHUD.id = 'filters-hud';
+filtersHUD.style.position = 'absolute';
+filtersHUD.style.top = '20px';
+filtersHUD.style.left = '50%';
+filtersHUD.style.transform = 'translateX(-50%)';
 filtersHUD.style.display = 'flex';
 filtersHUD.style.gap = '15px';
+filtersHUD.style.zIndex = '100';
 filtersHUD.style.pointerEvents = 'auto';
 
 function createFilterButton(label, colorHex, key) {
@@ -157,14 +166,8 @@ filtersHUD.appendChild(createFilterButton('SOUTENU', '#dc2626', 'soutenu'));
 filtersHUD.appendChild(createFilterButton('COURANT', '#2563eb', 'courant'));
 filtersHUD.appendChild(createFilterButton('FAMILIER', '#10b981', 'familier'));
 
-const hudFlow = document.getElementById('hud-flow');
-if (hudFlow) {
-  hudFlow.appendChild(filtersHUD);
-  hudFlow.appendChild(projectInfoHUD);
-} else {
-  document.body.appendChild(filtersHUD);
-  document.body.appendChild(projectInfoHUD);
-}
+document.body.appendChild(filtersHUD);
+document.body.appendChild(projectInfoHUD);
 
 function initScene() {
   const container = document.getElementById('canvas-container');
@@ -433,6 +436,7 @@ function checkIntersections() {
     updateHUDCard(intersects[0].object.userData);
     if (window.innerWidth <= 800) {
        card.classList.remove('hidden');
+       card.classList.add('mobile-open');
     }
   } else {
     document.body.style.cursor = 'default';
@@ -497,12 +501,11 @@ const startTimer = setInterval(() => {
 const infoTab = document.getElementById('info-tab');
 const cardTab = document.getElementById('card-tab');
 const infoClose = document.getElementById('info-close');
-const cardClose = document.getElementById('card-close');
 const projectInfoElement = document.getElementById('project-info');
 
 if (infoTab) {
   infoTab.addEventListener('click', () => {
-    projectInfoElement.classList.add('mobile-open');
+    projectInfoElement.classList.toggle('mobile-open');
     card.classList.remove('mobile-open'); 
   });
 }
@@ -515,14 +518,7 @@ if (infoClose) {
 
 if (cardTab) {
   cardTab.addEventListener('click', () => {
-    card.classList.remove('hidden');
-    card.classList.add('mobile-open');
+    card.classList.toggle('mobile-open');
     if (projectInfoElement) projectInfoElement.classList.remove('mobile-open'); 
-  });
-}
-
-if (cardClose) {
-  cardClose.addEventListener('click', () => {
-    card.classList.remove('mobile-open');
   });
 }
