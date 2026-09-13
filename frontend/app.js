@@ -4,7 +4,16 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-const WS_URL = 'ws://127.0.0.1:8000/ws';
+let WS_URL;
+
+if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    WS_URL = "ws://localhost:8000/ws";
+} 
+else {
+    WS_URL = "wss://p01--regibert--ybpp4jlb5k9w.code.run/ws";
+}
+
+const socket = new WebSocket(WS_URL);
 const MAX_LIVE_POSTS = 500;
 
 let scene, camera, renderer, controls, composer;
