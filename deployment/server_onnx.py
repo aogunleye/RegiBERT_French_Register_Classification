@@ -29,9 +29,8 @@ NOT work; always launch it as a package through uvicorn as shown above.)
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
-
+import gc
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-
 import asyncio
 import joblib
 import numpy as np
@@ -66,33 +65,58 @@ def compute_rgb(probs: dict) -> list:
 async def lifespan(app: FastAPI):
     print("Démarrage du serveur (ONNX Runtime, CPU) ...")
 
-    umap_path = Path(config.UMAP_SAVE_PATH)
-    if not umap_path.exists():
-        raise FileNotFoundError(f"UMAP file not found: {umap_path}")
+    checkpoints_dir = Path(__file__).resolve().parent / "checkpoints"
+    
+    reducer_path = checkpoints_dir / "umap_reducer.joblib"
+    proj_path = checkpoints_dir / "static_projections.npy"
+    targets_path = checkpoints_dir / "static_targets.npy"
 
-    # 1. Chargement UMAP + purge immédiate
-    umap_data = joblib.load(umap_path)
-    reducer = umap_data["umap_model"]
-    # ... (extraction des static_points) ...
+    if not reducer_path.exists() or not proj_path.exists():
+        raise FileNotFoundError(f"Fichiers légers UMAP introuvables dans {checkpoints_dir}")
 
-    del umap_data
+    reducer_data = joblib.load(reducer_path)
+    reducer = reducer_data["umap_model"] if isinstance(reducer_data, dict) else reducer_data
+
+    static_projections = np.load(proj_path)
+    targets = np.load(targets_path) if targets_path.exists() else []
+
+    static_points = []
+    for i in range(len(static_projections)):
+        x = float(np.nan_to_num(static_projections[i][0]))
+        y = float(np.nan_to_num(static_projections[i][1]))
+        z = float(np.nan_to_num(static_projections[i][2]))
+        
+        if len(targets) > i:
+            target_val = targets[i]
+            if isinstance(target_val, np.ndarray) and len(target_val) >= 3:
+                p_s, p_c, p_f = float(target_val[0]), float(target_val[1]), float(target_val[2])
+            else:
+                idx = int(target_val)
+                p_s = 1.0 if idx == 0 else 0.0
+                p_c = 1.0 if idx == 1 else 0.0
+                p_f = 1.0 if idx == 2 else 0.0
+        else:
+            p_s, p_c, p_f = 0.5, 0.5, 0.5
+
+        r = (p_s * 0.862) + (p_c * 0.145) + (p_f * 0.063)
+        g = (p_s * 0.149) + (p_c * 0.388) + (p_f * 0.725)
+        b = (p_s * 0.149) + (p_c * 0.922) + (p_f * 0.506)
+
+        static_points.append([x, y, z, r, g, b])
+
     del static_projections
     del targets
-    gc.collect()  # Purge avant d'allouer ONNX
+    gc.collect()
 
-    # 2. Configuration ONNX mono-thread (économise ~150 Mo de RAM d'allocation initiale)
-    import onnxruntime as ort
-    opts = ort.SessionOptions()
-    opts.intra_op_num_threads = 1
-    opts.inter_op_num_threads = 1
+    onnx_path = checkpoints_dir / "regibert_int8.onnx"
+    tokenizer_dir = checkpoints_dir / "tokenizer"
 
-    onnx_path = Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"
-    tokenizer_dir = Path(__file__).resolve().parent / "checkpoints" / "tokenizer"
+    if not onnx_path.exists():
+        onnx_path = checkpoints_dir / "regibert.onnx"
 
     engine = RegiBERTONNX(
         onnx_path=str(onnx_path),
-        tokenizer_dir=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base",
-        session_options=opts  # Passe les options mono-thread si ton wrapper le permet
+        tokenizer_dir=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
     )
 
     MODEL_STATE.update({
