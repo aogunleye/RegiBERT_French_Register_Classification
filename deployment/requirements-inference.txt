@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+onnxruntime
+transformers   
+numpy
+atproto
+joblib
+umap-learn     
+onnx          
+onnxruntime

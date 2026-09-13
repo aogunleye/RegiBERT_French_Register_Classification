@@ -67,5 +67,5 @@ class BlueskyStreamer:
                 print("Connexion to Firehose...")
                 await client.start(on_message_handler)
             except Exception as e:
-                print(f"Disconnected ({e}). Reconnexion in 5s...")
+                print(f"Disconnected ({e}). Reconnecting in 5s...")
                 await asyncio.sleep(5.0)

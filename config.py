@@ -1,10 +1,16 @@
 import os
-import torch
+from pathlib import Path
 
 # based on my hardware and dataset size, but can be adjusted
+
 SEED = 42
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-USE_AMP = DEVICE.type == "cuda"  # activates fp16 mixed precision if using GPU
+try: # for docker
+    import torch
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+except ImportError:
+    # for oonx without pytorch
+    DEVICE = "cpu"
+USE_AMP = False if isinstance(DEVICE, str) else (DEVICE.type == "cuda")  # activates fp16 mixed precision if using GPU
 MODEL_NAME = "camembert-base"
 NUM_CLASSES = 3
 BATCH_SIZE = 32

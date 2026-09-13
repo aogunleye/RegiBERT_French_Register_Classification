@@ -2,7 +2,6 @@
 Curvature landscape figure for RegiBERT, reproducing the method used in
 Di Sipio, Diaz-Rodriguez & Serrano (2025), "The Curved Spacetime of Transformer
 Architectures" (arXiv:2511.03060) and their reference implementation.
-
 """
 
 from __future__ import annotations

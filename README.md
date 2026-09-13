@@ -20,7 +20,7 @@
 ## 1. Abstract
 
 The detection of linguistic registers has historically suffered from rigid classification approaches (hard labels). However, natural language is inherently nuanced and ambiguous. This project introduces RegiBERT, a CamemBERT-based model designed to capture this linguistic continuity. Rather than assigning a single exclusive class to a sentence, the model learned to predict a probability distribution (soft labels) using the annotated TrémoLo corpus. 
-RegiBERT achieves a validation KL divergence loss of 0.365, a Mean Absolute Error of 0.179, and an overall accuracy of 84.5%. Layer-wise probing further reveals that stylistic nuance crystallizes in deeper transformer representations, peaking at Layer 12 ($R^2 = 0.556$). A 3D UMAP projection calibrated on the validation subdataset confirms this structure geometrically, revealing a continuous manifold where the standard register smoothly connects the formal and colloquial clusters.
+RegiBERT achieves a validation KL divergence loss of 0.365, a MAE of 0.179, and an overall accuracy of 84.5%. Layer-wise probing further reveals that stylistic nuance crystallizes in deeper transformer representations, peaking at layer 12 (R² = 0.556). A 3D UMAP projection calibrated on the validation subdataset confirms this structure geometrically, revealing a continuous manifold where the standard register smoothly connects the formal and colloquial clusters.
 
 ---
 
@@ -307,7 +307,7 @@ On the other hand, layer-wise probing reveals that stylistic representations pro
 
 ---
 
-## 12. Quick start
+## 12. Quick start and notebook
 
 ### Dataset access
 The corpus is not hostable directly in this repository due to licensing and size limits.  
@@ -353,6 +353,12 @@ python -m http.server 5500 --directory frontend
 ```
 
 Then open `http://localhost:5500` in your browser.
+
+### Notebook
+
+**If you just want to test it quickly :** [Open in Colab](https://colab.research.google.com/github.com/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb)
+
+If you’re using Google Colab, enable a GPU accelerator (`Run` > `Change run type` > `GPU T4`)
 
 ---
 
