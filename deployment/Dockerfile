@@ -15,16 +15,10 @@ COPY config.py .
 COPY backend/ ./backend/
 COPY deployment/ ./deployment/
 
+# Téléchargement propre de tous les fichiers (modèle + projections + tokenizer)
 ARG HF_REPO_ID=aogunleye/regibert-deployment
-RUN mkdir -p deployment/checkpoints/tokenizer && \
-    curl -L -o deployment/checkpoints/regibert_int8.onnx "https://huggingface.co/${HF_REPO_ID}/resolve/main/regibert_int8.onnx" && \
-    curl -L -o deployment/checkpoints/static_embeddings.npy "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_embeddings.npy" && \
-    curl -L -o deployment/checkpoints/static_projections.npy "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_projections.npy" && \
-    curl -L -o deployment/checkpoints/static_targets.npy "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_targets.npy" && \
-    curl -L -o deployment/checkpoints/tokenizer/tokenizer.json "https://huggingface.co/${HF_REPO_ID}/resolve/main/tokenizer/tokenizer.json" && \
-    curl -L -o deployment/checkpoints/tokenizer/tokenizer_config.json "https://huggingface.co/${HF_REPO_ID}/resolve/main/tokenizer/tokenizer_config.json" && \
-    curl -L -o deployment/checkpoints/tokenizer/special_tokens_map.json "https://huggingface.co/${HF_REPO_ID}/resolve/main/tokenizer/special_tokens_map.json" && \
-    curl -L -o deployment/checkpoints/tokenizer/sentencepiece.bpe.model "https://huggingface.co/${HF_REPO_ID}/resolve/main/tokenizer/sentencepiece.bpe.model"
+RUN pip install --no-cache-dir huggingface_hub && \
+    python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='${HF_REPO_ID}', local_dir='deployment/checkpoints')"
 
 ENV PORT=8000
 EXPOSE 8000
