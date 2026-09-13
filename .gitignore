@@ -9,7 +9,6 @@ ENV/
 
 data/
 checkpoints/*.pt
-checkpoints/*.joblib
 
 resultats_ph1.txt
 resultats_ph2.txt
@@ -18,8 +17,5 @@ resultats_ph2.txt
 .vscode/
 .idea/
 
-plots.py
-
-deployment/checkpoints/
 deployment/.env
 deployment/__pycache__/
