@@ -64,7 +64,7 @@ def compute_rgb(probs: dict) -> list:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("🚀 Démarrage du serveur (ONNX Runtime, CPU) ...")
+    print("Démarrage du serveur (ONNX Runtime, CPU) ...")
 
     umap_path = Path(config.UMAP_SAVE_PATH)
     if not umap_path.exists():
@@ -99,7 +99,7 @@ async def lifespan(app: FastAPI):
 
         static_points.append([x, y, z, r, g, b])
 
-    engine = RegiBERTONNX(model_path=str(Path(__file__).resolve().parent / "checkpoints" / "regibert.onnx"))
+    engine = RegiBERTONNX(model_path=str(Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"))
 
     MODEL_STATE.update({
         "engine": engine,
