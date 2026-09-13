@@ -11,9 +11,11 @@
 <p align="center">
   <img src="images/renderanimation.gif" alt="RegiBERT 3D Live Projection Demo" width="100%" style="border-radius: 8px;" />
 </p>
-<p align="center">
-  Try the deployed web application at <a href="#">website link</a>
-</p>
+
+<h4 align="center">
+  Try the deployed live app <a href="https://aogunleye.github.io/RegiBERT_French_Register_Classification/frontend/">here <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg" width="12" height="12" alt="external link"></a>
+</h4>
+
 
 ---
 
@@ -236,7 +238,7 @@ RegiBERT's performance on the validation split demonstrates strong predictive ca
 
 From a sociolinguistic perspective, this aligns with the concept that everyday communication naturally oscillates, incorporating mild slang or formal phrasing, which makes a standard register structurally harder to isolate.
 
-This statistical variance translates into the topological structure observed in the [spatial projection](#). In the resulting 3D UMAP points cloud, the Standard register appears visually more extended and diffuse, smoothly bridging the denser, more confidently classified Formal and Colloquial clusters.
+This statistical variance translates into the topological structure observed in the [spatial projection](https://aogunleye.github.io/RegiBERT_French_Register_Classification/frontend/). In the resulting 3D UMAP points cloud, the Standard register appears visually more extended and diffuse, smoothly bridging the denser, more confidently classified Formal and Colloquial clusters.
 
 ---
 
@@ -334,7 +336,7 @@ pip install -r dependencies.txt
 
 ### Live Bluesky streaming
 
-> **Live Demo:** Try the deployed web application at **[#](#)**
+> **Live demo:** Try the [deployed web application](https://aogunleye.github.io/RegiBERT_French_Register_Classification/frontend/)
 
 To run the full streaming pipeline locally:
 
