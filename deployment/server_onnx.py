@@ -35,7 +35,7 @@ def compute_rgb(probs: dict) -> list:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Démarrage du serveur (ONNX Runtime, CPU) ...")
+    print("Starting server...")
 
     checkpoints_dir = Path(__file__).resolve().parent / "checkpoints"
     
@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     targets_path = checkpoints_dir / "static_targets.npy"
 
     if not reducer_path.exists() or not proj_path.exists():
-        raise FileNotFoundError(f"Fichiers légers UMAP introuvables dans {checkpoints_dir}")
+        raise FileNotFoundError(f"Files not found {checkpoints_dir}")
 
     reducer_data = joblib.load(reducer_path)
     reducer = reducer_data["umap_model"] if isinstance(reducer_data, dict) else reducer_data
