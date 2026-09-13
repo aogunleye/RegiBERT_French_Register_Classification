@@ -28,7 +28,7 @@ COPY deployment/ ./deployment/
 # exceed GitHub's 100MB limit. They're downloaded here instead, from a
 # Hugging Face Hub repo, so the git repo only ever holds code.
 # CHANGE THIS to match the REPO_ID used in upload_to_hf.py
-ARG HF_REPO_ID=your-hf-username/regibert-deployment
+ARG HF_REPO_ID=aogunleye/regibert-deployment
 RUN mkdir -p deployment/checkpoints && \
     curl -L -o deployment/checkpoints/regibert_int8.onnx \
         "https://huggingface.co/${HF_REPO_ID}/resolve/main/regibert_int8.onnx" && \
