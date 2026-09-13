@@ -501,6 +501,7 @@ const startTimer = setInterval(() => {
 const infoTab = document.getElementById('info-tab');
 const cardTab = document.getElementById('card-tab');
 const infoClose = document.getElementById('info-close');
+const cardClose = document.getElementById('card-close');
 const projectInfoElement = document.getElementById('project-info');
 
 if (infoTab) {
@@ -520,5 +521,14 @@ if (cardTab) {
   cardTab.addEventListener('click', () => {
     card.classList.toggle('mobile-open');
     if (projectInfoElement) projectInfoElement.classList.remove('mobile-open'); 
+  });
+}
+
+if (cardClose) {
+  cardClose.addEventListener('click', (event) => {
+    card.classList.remove('mobile-open');
+    mouse.x = -100;
+    mouse.y = -100;
+    event.stopPropagation();
   });
 }
