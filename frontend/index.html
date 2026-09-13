@@ -31,11 +31,15 @@
 
     <div id="hud-flow"></div>
 
+    <button id="info-tab" class="side-tab side-tab-left" aria-label="Ouvrir les infos du projet">ℹ</button>
+    <button id="card-tab" class="side-tab side-tab-right" aria-label="Ouvrir le dernier post">💬</button>
+
     <!-- post information panel -->
     <div id="card" class="card hidden">
       <div class="card-header">
         <span id="post-id" class="post-id">#000000</span>
         <span id="post-type" class="post-type">Live stream</span>
+        <button id="card-close" class="panel-close" aria-label="Fermer">×</button>
       </div>
       <p id="post-text" class="post-text">Survolez un point ou attendez un nouveau post...</p>
       

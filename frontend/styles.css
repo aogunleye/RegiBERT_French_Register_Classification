@@ -4,7 +4,6 @@
   --border-color: rgba(255, 255, 255, 0.1);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  
   --soutenu-color: #dc2626;
   --courant-color: #2563eb;
   --familier-color: #10b981;
@@ -33,7 +32,6 @@ body {
   left: 0;
   z-index: 1;
 }
-
 
 #hud {
   position: absolute;
@@ -155,7 +153,6 @@ h1 {
   flex-direction: column;
   gap: 16px;                  
   transition: opacity 0.3s ease, transform 0.3s ease;
-
   position: fixed !important;
   top: 50% !important;
   right: 24px !important;
@@ -250,49 +247,131 @@ h1 {
   transition: all 0.3s ease;
 }
 
+.side-tab {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #0ea5e9;
+  padding: 16px 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  display: none;
+}
+
+.side-tab-left {
+  left: 0;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+}
+
+.side-tab-right {
+  right: 0;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+}
+
+.panel-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+}
+
+.panel-close:hover {
+  color: #f8fafc;
+}
+
 @media (max-width: 800px) {
-  /* En-tête sur deux lignes */
+  .side-tab, .panel-close {
+    display: block;
+  }
+
   .hud-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
 
+  .hud-header h1 {
+    font-size: 1rem;
+  }
+
+  .badge {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  #filters-hud {
+    position: absolute !important;
+    top: 60px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  
   #filters-hud button {
     font-size: 10px !important;
     padding: 6px 10px !important;
   }
 
   #project-info {
-    width: calc(100% - 32px) !important;
-    max-height: 25vh !important;
-    padding: 12px !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    width: 85vw !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1000 !important;
+  }
+
+  #project-info.mobile-open {
+    transform: translateX(0) !important;
   }
 
   .card {
-    width: calc(100% - 32px) !important;
-    left: 16px !important;
-    right: 16px !important;
-    top: auto !important;
-    bottom: 16px !important;
-    transform: translateY(0) !important;
-    min-height: auto !important;
-    padding: 16px !important;
+    position: fixed !important;
+    right: 0 !important;
+    left: auto !important;
+    top: 0 !important;
+    bottom: auto !important;
+    height: 100vh !important;
+    width: 85vw !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1000 !important;
+    opacity: 1 !important;
+  }
+
+  .card.mobile-open {
+    transform: translateX(0) !important;
   }
 
   .card.hidden {
-    transform: translateY(150%) !important;
+    transform: translateX(100%) !important;
+  }
+
+  .waiting-message {
+    bottom: 25px !important;
+    width: 90% !important;
+    font-size: 11px !important;
   }
   
   #coords-hud {
-    font-size: 10px !important;
-    bottom: 12px !important;
-    right: 12px !important;
-    opacity: 0.6 !important;
-  }
-  
-  .waiting-message {
-    bottom: 140px;
-    width: 85%;
+    display: none !important;
   }
 }

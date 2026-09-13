@@ -84,12 +84,15 @@ projectInfoHUD.innerHTML = `
                 <span class="material-icons" style="font-size: 22px;">info_outline</span>
       </div>
     </div>
-    <!-- LIEN GITHUB -->
-    <a href="https://github.com/aogunleye" target="_blank" title="Voir le code source sur GitHub">
-      <img src="github.png" alt="GitHub" style="width: 28px; height: 28px; opacity: 0.7; transition: 0.3s;" 
-           onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 5px #0ea5e9)';" 
-           onmouseout="this.style.opacity='0.7'; this.style.filter='none';">
-    </a>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <!-- LIEN GITHUB -->
+      <a href="https://github.com/aogunleye" target="_blank" title="Voir le code source sur GitHub">
+        <img src="github.png" alt="GitHub" style="width: 28px; height: 28px; opacity: 0.7; transition: 0.3s;" 
+             onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 5px #0ea5e9)';" 
+             onmouseout="this.style.opacity='0.7'; this.style.filter='none';">
+      </a>
+      <button id="info-close" class="panel-close" aria-label="Fermer">×</button>
+    </div>
   </div>
 
   <div style="margin-bottom: 12px; padding: 6px 10px; background: rgba(14, 165, 233, 0.1); border: 1px dashed rgba(14, 165, 233, 0.4); border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
@@ -393,6 +396,7 @@ function updateHUDCard(data) {
   if (!data) return;
   
   card.classList.remove('hidden');
+  card.classList.add('mobile-open')
 
   // formating date
   let dateText = "";
@@ -500,3 +504,28 @@ const startTimer = setInterval(() => {
     }
   }
 }, 1000);
+
+const infoTab = document.getElementById('info-tab');
+const cardTab = document.getElementById('card-tab');
+const infoClose = document.getElementById('info-close');
+const cardClose = document.getElementById('card-close');
+const projectInfoElement = document.getElementById('project-info');
+
+infoTab.addEventListener('click', () => {
+  projectInfoElement.classList.add('mobile-open');
+  card.classList.remove('mobile-open'); 
+});
+
+infoClose.addEventListener('click', () => {
+  projectInfoElement.classList.remove('mobile-open');
+});
+
+cardTab.addEventListener('click', () => {
+  card.classList.remove('hidden');
+  card.classList.add('mobile-open');
+  projectInfoElement.classList.remove('mobile-open'); 
+});
+
+cardClose.addEventListener('click', () => {
+  card.classList.remove('mobile-open');
+});
