@@ -395,7 +395,9 @@ function connectWebSocket() {
 function updateHUDCard(data) {
   if (!data) return;
   
-  card.classList.remove('hidden');
+  if (window.innerWidth > 800) {
+    card.classList.remove('hidden');
+  }
   card.classList.add('mobile-open')
 
   // formating date
@@ -528,4 +530,21 @@ cardTab.addEventListener('click', () => {
 
 cardClose.addEventListener('click', () => {
   card.classList.remove('mobile-open');
+});
+
+window.addEventListener('pointerdown', (event) => {
+  if (window.innerWidth <= 800) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(livePostsData);
+    
+    if (intersects.length > 0) {
+      card.classList.remove('hidden');
+      updateHUDCard(intersects[0].object.userData);
+    } else {
+      card.classList.add('hidden');
+    }
+  }
 });
