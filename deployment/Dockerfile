@@ -16,7 +16,7 @@ COPY backend/ ./backend/
 COPY deployment/ ./deployment/
 
 ARG HF_REPO_ID=aogunleye/regibert-deployment
-RUN mkdir -p deployment/checkpoints && \
+RUN mkdir -p deployment/checkpoints/tokenizer && \
     curl -L -o deployment/checkpoints/regibert_int8.onnx \
         "https://huggingface.co/${HF_REPO_ID}/resolve/main/regibert_int8.onnx" && \
     curl -L -o deployment/checkpoints/static_embeddings.npy \
@@ -24,7 +24,11 @@ RUN mkdir -p deployment/checkpoints && \
     curl -L -o deployment/checkpoints/static_projections.npy \
         "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_projections.npy" && \
     curl -L -o deployment/checkpoints/static_targets.npy \
-        "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_targets.npy"
+        "https://huggingface.co/${HF_REPO_ID}/resolve/main/static_targets.npy" && \
+    curl -L -o deployment/checkpoints/tokenizer/tokenizer_config.json \
+        "https://huggingface.co/camembert-base/resolve/main/tokenizer_config.json" && \
+    curl -L -o deployment/checkpoints/tokenizer/sentencepiece.bpe.model \
+        "https://huggingface.co/camembert-base/resolve/main/sentencepiece.bpe.model"
 
 ENV PORT=8000
 EXPOSE 8000

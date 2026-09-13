@@ -73,7 +73,12 @@ async def lifespan(app: FastAPI):
 
         static_points.append([x, y, z, r, g, b])
 
-    engine = RegiBERTONNX(model_path=str(checkpoints_dir / "regibert_int8.onnx"))
+    tokenizer_dir = checkpoints_dir / "tokenizer"
+
+    engine = RegiBERTONNX(
+        model_path=str(checkpoints_dir / "regibert_int8.onnx"),
+        tokenizer_name_or_path=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
+    )
     projector = NeighborProjector(checkpoints_dir, k=15)
 
     MODEL_STATE.update({
