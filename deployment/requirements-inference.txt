@@ -1,9 +1,7 @@
-# Production/inference requirements — no torch, no umap-learn (removed after
-# it turned out to be the likely cause of an OOM at container startup on a
-# 512 MiB plan, due to numba's JIT compilation on import).
 fastapi
 uvicorn[standard]
 onnxruntime
-transformers   # tokenizer only — does not require torch to be installed
+transformers   
 numpy
 atproto
+sentencepiece

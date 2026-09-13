@@ -31,7 +31,7 @@ MAX_LENGTH = 128
 
 class RegiBERTONNX:
     def __init__(self, model_path: str = MODEL_PATH, tokenizer_name_or_path: str = TOKENIZER_NAME):
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path, use_fast=False)
         
         options = ort.SessionOptions()
         options.intra_op_num_threads = 1
