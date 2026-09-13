@@ -29,13 +29,15 @@ NOT work; always launch it as a package through uvicorn as shown above.)
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 import asyncio
-import gc
 import joblib
 import numpy as np
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+
 import config
 from backend.stream import BlueskyStreamer
 from .inference_onnx import RegiBERTONNX
@@ -97,37 +99,21 @@ async def lifespan(app: FastAPI):
 
         static_points.append([x, y, z, r, g, b])
 
-    del umap_data
-    del static_projections
-    del targets
-    gc.collect()
-
-    onnx_path = Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"
-    tokenizer_dir = Path(__file__).resolve().parent / "checkpoints" / "tokenizer"
-    
-    if not onnx_path.exists():
-        onnx_path = Path(__file__).resolve().parent / "checkpoints" / "regibert.onnx"
-
-    engine = RegiBERTONNX(
-        onnx_path=str(onnx_path),
-        tokenizer_dir=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
-    )
+    engine = RegiBERTONNX(model_path=str(Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"))
 
     MODEL_STATE.update({
         "engine": engine,
         "reducer": reducer,
-        "static_projections": static_points
+        "static_projections": static_points,
     })
-    
-    worker_task = asyncio.create_task(inference_worker())
-    streamer = BlueskyStreamer(post_queue)
-    stream_task = asyncio.create_task(streamer.start())
 
-    gc.collect()
+    streamer = BlueskyStreamer(output_queue=post_queue, interval_seconds=10.0)
+    asyncio.create_task(streamer.start())
+    asyncio.create_task(inference_worker())
+
     yield
 
-    stream_task.cancel()
-    worker_task.cancel()
+    print("Shutting down server and freeing up resources...")
     MODEL_STATE.clear()
 
 
