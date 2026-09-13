@@ -1,12 +1,12 @@
 
 # RegiBERT: Continuous Modeling of French Linguistic Registers via Label Distribution Learning, Linear Probing and UMAP Projection
 
-
+<p>
   <img src="https://img.shields.io/badge/Python-3.11.9-3776AB?logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/PyTorch-2.5.1-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch" />
   <img src="https://img.shields.io/badge/Backbone-CamemBERT--base-FFD21E?logo=huggingface&logoColor=black" alt="CamemBERT" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
-
+</p>
 
 <p align="center">
   <img src="images/renderanimation.gif" alt="RegiBERT 3D Live Projection Demo" width="100%" style="border-radius: 8px;" />
