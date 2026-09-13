@@ -31,8 +31,11 @@
 
     <div id="card" class="card hidden">
       <div class="card-header">
-        <span id="post-id" class="post-id">#000000</span>
-        <span id="post-type" class="post-type">Live Stream</span>
+        <div>
+          <span id="post-id" class="post-id">#000000</span>
+          <span id="post-type" class="post-type" style="margin-left: 8px;">Live stream</span>
+        </div>
+        <button id="card-close" class="panel-close" aria-label="Fermer" style="background:none; border:none; color:white; font-size:20px; cursor:pointer; line-height: 1;">×</button>
       </div>
       <p id="post-text" class="post-text">Survolez un point ou attendez un nouveau post...</p>
       
@@ -56,7 +59,7 @@
     </div>
 
     <button id="info-tab" class="mobile-tab left-tab" title="Informations"><span class="material-icons">info_outline</span></button>
-    <button id="card-tab" class="mobile-tab right-tab" title="Dernier Post"><span class="material-icons">chat</span></button>
+    <button id="card-tab" class="mobile-tab right-tab" title="Dernier Post"><span class="material-icons">comment</span></button>
 
     <div id="waiting-message" class="waiting-message">
       En attente du premier post dans <span id="countdown">5</span>...
