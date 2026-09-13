@@ -85,8 +85,8 @@ projectInfoHUD.innerHTML = `
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
-      <a href="https://github.com/aogunleye" target="_blank" title="Voir le code source sur GitHub">
-        <img src="github.png" alt="GitHub" style="width: 28px; height: 28px; opacity: 0.7; transition: 0.3s;" 
+      <a href="https://github.com/aogunleye/RegiBERT_French_Register_Classification" target="_blank" title="Voir le code source sur GitHub">
+        <img src="github2.png" alt="GitHub" style="width: 28px; height: 28px; opacity: 0.7; transition: 0.3s;" 
              onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 5px #0ea5e9)';" 
              onmouseout="this.style.opacity='0.7'; this.style.filter='none';">
       </a>
@@ -108,7 +108,6 @@ projectInfoHUD.innerHTML = `
       Au lieu de classer les textes dans des cases rigides, le modèle de langue neuronal <a href="https://huggingface.co/almanach/camembert-base" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">CamemBERT</a> a été entraîné sur le corpus <a href="http://tremolo.irisa.fr/fr/tremolo-tweets-corpus/" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">TREMoLo-Tweets</a> pour prédire une <i>distribution de probabilités</i>. 
       Les vecteurs à 768 dimensions sont ensuite projetés topologiquement en 3D via <b>UMAP</b>. J'ai nommé ce modèle <b>RegiBERT</b>.
     </p>
-    <p>Pour plus d'informations sur ma démarche, les méthodes, les outils, les données, le modèle etc., consultez le <a href="https://github.com/aogunleye/registre-langue" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">dépôt GitHub</a>.</p>
 
     <div style="margin-top: 18px; margin-bottom: 8px; font-weight: bold; color: #0ea5e9; font-size: 12px; border-bottom: 1px dashed #334155; padding-bottom: 4px;">
       DESCRIPTION VISUELLE

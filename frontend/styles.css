@@ -234,6 +234,10 @@ h1 {
   display: none !important;
 }
 
+#info-close {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .hud-header {
     flex-direction: row !important;
@@ -281,6 +285,10 @@ h1 {
     right: 0 !important;
     border-radius: 8px 0 0 8px !important;
     border-right: none !important;
+  }
+
+  #info-close {
+    display: block !important;
   }
 
   #project-info {
