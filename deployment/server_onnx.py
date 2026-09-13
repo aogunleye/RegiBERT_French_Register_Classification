@@ -87,8 +87,8 @@ async def lifespan(app: FastAPI):
         onnx_path = checkpoints_dir / "regibert.onnx"
 
     engine = RegiBERTONNX(
-        onnx_path=str(onnx_path),
-        tokenizer_dir=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
+        model_path=str(onnx_path),
+        tokenizer_name_or_path=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
     )
 
     MODEL_STATE.update({

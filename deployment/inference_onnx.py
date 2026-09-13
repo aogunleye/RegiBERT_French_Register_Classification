@@ -30,10 +30,9 @@ MAX_LENGTH = 128
 
 
 class RegiBERTONNX:
-    def __init__(self, model_path: str = MODEL_PATH):
-        self.tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_NAME)
-        # Single-threaded is usually fine and lighter on a small free-tier
-        # instance; raise intra_op_num_threads if you have more vCPU headroom.
+    def __init__(self, model_path: str = MODEL_PATH, tokenizer_name_or_path: str = TOKENIZER_NAME):
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
+        
         options = ort.SessionOptions()
         options.intra_op_num_threads = 1
         self.session = ort.InferenceSession(
