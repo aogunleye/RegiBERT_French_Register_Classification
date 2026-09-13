@@ -3,11 +3,8 @@ FROM python:3.11-slim
 WORKDIR /app
 ENV PYTHONPATH=/app
 
-# Ajout de git et git-lfs dans le conteneur
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    git \
-    git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
 COPY deployment/requirements-inference.txt ./deployment/requirements-inference.txt
@@ -16,8 +13,6 @@ RUN pip install --no-cache-dir -r deployment/requirements-inference.txt
 COPY config.py .
 COPY backend/ ./backend/
 COPY deployment/ ./deployment/
-
-COPY checkpoints/umap_3d.joblib ./checkpoints/umap_3d.joblib
 
 ENV PORT=8000
 EXPOSE 8000
