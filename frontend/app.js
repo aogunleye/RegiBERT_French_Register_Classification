@@ -13,7 +13,6 @@ else {
     WS_URL = "wss://p01--regibert--ybpp4jlb5k9w.code.run/ws";
 }
 
-const socket = new WebSocket(WS_URL);
 const MAX_LIVE_POSTS = 500;
 
 let scene, camera, renderer, controls, composer;
@@ -67,9 +66,6 @@ document.head.appendChild(style);
 // HUD project information and legend
 const projectInfoHUD = document.createElement('div');
 projectInfoHUD.id = 'project-info';
-projectInfoHUD.style.position = 'absolute';
-projectInfoHUD.style.bottom = '20px';
-projectInfoHUD.style.left = '20px';
 projectInfoHUD.style.color = '#cbd5e1'; 
 projectInfoHUD.style.fontFamily = 'monospace';
 projectInfoHUD.style.pointerEvents = 'auto';
@@ -79,7 +75,6 @@ projectInfoHUD.style.border = '1px solid #334155';
 projectInfoHUD.style.borderRadius = '8px';
 projectInfoHUD.style.backdropFilter = 'blur(6px)';
 projectInfoHUD.style.width = '380px';
-projectInfoHUD.style.zIndex = '50';
 projectInfoHUD.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
 
 projectInfoHUD.innerHTML = `
@@ -129,19 +124,12 @@ projectInfoHUD.innerHTML = `
 // prevents mouse wheel from zooming cam when scrolling panel text
 projectInfoHUD.addEventListener('wheel', (e) => e.stopPropagation());
 
-document.body.appendChild(projectInfoHUD);
-
 // dynamic filter
 const filtersHUD = document.createElement('div');
 filtersHUD.id = 'filters-hud';
-filtersHUD.style.position = 'absolute';
-filtersHUD.style.top = '20px';
-filtersHUD.style.left = '50%';
-filtersHUD.style.transform = 'translateX(-50%)';
 filtersHUD.style.display = 'flex';
 filtersHUD.style.gap = '15px';
-filtersHUD.style.zIndex = '100';
-document.body.appendChild(filtersHUD);
+filtersHUD.style.pointerEvents = 'auto';
 
 function createFilterButton(label, colorHex, key) {
   const btn = document.createElement('button');
@@ -172,6 +160,10 @@ function createFilterButton(label, colorHex, key) {
 filtersHUD.appendChild(createFilterButton('SOUTENU', '#dc2626', 'soutenu'));
 filtersHUD.appendChild(createFilterButton('COURANT', '#2563eb', 'courant'));
 filtersHUD.appendChild(createFilterButton('FAMILIER', '#10b981', 'familier'));
+
+const hudFlow = document.getElementById('hud-flow');
+hudFlow.appendChild(filtersHUD);
+hudFlow.appendChild(projectInfoHUD);
 
 
 // ----------------------------------------------------
@@ -503,7 +495,6 @@ const startTimer = setInterval(() => {
     clearInterval(startTimer);
     if (waitingMessage) {
       waitingMessage.innerHTML = "Les nouveaux posts s'affichent toutes les 5 secondes.";
-      // optionnel pour le rendre un peu plus discret après le compte à rebours
       waitingMessage.style.background = "rgba(2, 4, 8, 0.7)";
       waitingMessage.style.border = "1px solid #334155";
     }
