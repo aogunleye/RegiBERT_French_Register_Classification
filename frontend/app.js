@@ -395,16 +395,16 @@ function connectWebSocket() {
 function updateHUDCard(data) {
   if (!data) return;
   
-  card.classList.remove('hidden');
-  card.classList.add('mobile-open')
+  // Ouvre automatiquement la carte uniquement si on est sur PC (écran large)
+  if (window.innerWidth > 800) {
+    card.classList.remove('hidden');
+  }
 
-  // formating date
   let dateText = "";
   if (data.created_at) {
     const d = new Date(data.created_at);
     dateText = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + 
-               ' à ' + 
-               d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+               ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
 
   const shortAuthor = data.author ? data.author.replace('did:plc:', '').substring(0, 8) + '...' : 'anonyme';
@@ -415,10 +415,8 @@ function updateHUDCard(data) {
   if (postIdEl) postIdEl.textContent = `@${shortAuthor}`;
   if (postTypeEl) postTypeEl.textContent = dateText;
   
-  // post text
   postTextEl.textContent = `"${data.text}"`;
 
-  // probabilities
   const pSoutenu = Math.round(data.probs.soutenu * 100);
   const pCourant = Math.round(data.probs.courant * 100);
   const pFamilier = Math.round(data.probs.familier * 100);
@@ -505,27 +503,19 @@ const startTimer = setInterval(() => {
   }
 }, 1000);
 
-const infoTab = document.getElementById('info-tab');
-const cardTab = document.getElementById('card-tab');
-const infoClose = document.getElementById('info-close');
-const cardClose = document.getElementById('card-close');
-const projectInfoElement = document.getElementById('project-info');
-
-infoTab.addEventListener('click', () => {
-  projectInfoElement.classList.add('mobile-open');
-  card.classList.remove('mobile-open'); 
-});
-
-infoClose.addEventListener('click', () => {
-  projectInfoElement.classList.remove('mobile-open');
-});
-
-cardTab.addEventListener('click', () => {
-  card.classList.remove('hidden');
-  card.classList.add('mobile-open');
-  projectInfoElement.classList.remove('mobile-open'); 
-});
-
-cardClose.addEventListener('click', () => {
-  card.classList.remove('mobile-open');
+window.addEventListener('pointerdown', (event) => {
+  if (window.innerWidth <= 800) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(livePostsData);
+    
+    if (intersects.length > 0) {
+      card.classList.remove('hidden');
+      updateHUDCard(intersects[0].object.userData);
+    } else {
+      card.classList.add('hidden');
+    }
+  }
 });
