@@ -231,3 +231,64 @@ h1 {
   backdrop-filter: blur(4px);
   transition: all 0.3s ease;
 }
+
+/* --- RESPONSIVITÉ MOBILE & TABLETTES --- */
+@media (max-width: 800px) {
+  /* En-tête sur deux lignes */
+  .hud-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  /* Les boutons de filtre passent en dessous de l'en-tête */
+  #filters-hud {
+    top: 75px !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  
+  #filters-hud button {
+    font-size: 10px !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Panneau d'informations raccourci et placé en haut */
+  #project-info {
+    width: calc(100% - 32px) !important;
+    left: 16px !important;
+    bottom: auto !important;
+    top: 120px !important;
+    max-height: 25vh !important;
+    padding: 12px !important;
+  }
+
+  /* La carte de post s'ancre en bas de l'écran (façon tiroir) */
+  .card {
+    width: calc(100% - 32px) !important;
+    left: 16px !important;
+    right: 16px !important;
+    top: auto !important;
+    bottom: 16px !important;
+    transform: translateY(0) !important;
+    min-height: auto !important;
+    padding: 16px !important;
+  }
+
+  /* Animation du tiroir qui glisse vers le bas quand caché */
+  .card.hidden {
+    transform: translateY(150%) !important;
+  }
+  
+  /* On masque les coordonnées de la caméra pour gagner de la place */
+  #coords-hud {
+    display: none !important;
+  }
+  
+  /* Le message d'attente est remonté au centre de l'écran */
+  .waiting-message {
+    bottom: 50% !important;
+    width: 85% !important;
+  }
+}

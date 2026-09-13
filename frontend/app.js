@@ -42,6 +42,7 @@ const valFamilier = document.getElementById('val-familier');
 
 // hud dynamic coordinates
 const coordsHUD = document.createElement('div');
+coordsHUD.id = 'coords-hud';
 coordsHUD.style.position = 'absolute';
 coordsHUD.style.bottom = '20px';
 coordsHUD.style.right = '20px';
@@ -65,6 +66,7 @@ document.head.appendChild(style);
 
 // HUD project information and legend
 const projectInfoHUD = document.createElement('div');
+projectInfoHUD.id = 'project-info';
 projectInfoHUD.style.position = 'absolute';
 projectInfoHUD.style.bottom = '20px';
 projectInfoHUD.style.left = '20px';
@@ -131,6 +133,7 @@ document.body.appendChild(projectInfoHUD);
 
 // dynamic filter
 const filtersHUD = document.createElement('div');
+filtersHUD.id = 'filters-hud';
 filtersHUD.style.position = 'absolute';
 filtersHUD.style.top = '20px';
 filtersHUD.style.left = '50%';
