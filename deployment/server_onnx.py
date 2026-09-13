@@ -1,31 +1,3 @@
-"""
-ONNX-based rewrite of backend/server.py, for lightweight deployment (no
-PyTorch, no CUDA — suitable for Northflank's free tier).
-
-Key differences from backend/server.py:
-  - No torch. Inference runs through onnxruntime via RegiBERTONNX
-    (see inference_onnx.py).
-  - The redundant second forward pass (output_hidden_states=True to fetch
-    hidden_states[best_layer]) has been removed: model.forward()'s own
-    `embeddings` output already IS the mean-pooled last layer, which is
-    hidden_states[12] — and best_layer was found to be 12. If you retrain
-    and best_layer changes, this shortcut breaks; see the warning in
-    inference_onnx.py's predict_with_embedding().
-
-Expected file layout at runtime (see Dockerfile for how this is assembled):
-  /app/config.py
-  /app/backend/__init__.py, /app/backend/stream.py
-  /app/server_onnx.py         (this file)
-  /app/inference_onnx.py
-  /app/checkpoints/regibert.onnx
-  /app/checkpoints/umap_3d.joblib
-Run in production via (from the project root, or see Dockerfile):
-    uvicorn deployment.server_onnx:app --host 0.0.0.0 --port 8000
-(requires deployment/__init__.py to exist, since this file uses a relative
-import for inference_onnx — running "python server_onnx.py" directly will
-NOT work; always launch it as a package through uvicorn as shown above.)
-"""
-
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
