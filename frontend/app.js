@@ -519,6 +519,7 @@ if (infoClose) {
 
 if (cardTab) {
   cardTab.addEventListener('click', () => {
+    card.classList.remove('hidden'); // On force le retrait du mode caché
     card.classList.toggle('mobile-open');
     if (projectInfoElement) projectInfoElement.classList.remove('mobile-open'); 
   });
