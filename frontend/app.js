@@ -486,3 +486,23 @@ function animate() {
 
 initScene();
 connectWebSocket();
+
+// message d'attente
+const waitingMessage = document.getElementById('waiting-message');
+const countdownSpan = document.getElementById('countdown');
+let countdownValue = 5;
+
+const startTimer = setInterval(() => {
+  countdownValue--;
+  if (countdownValue > 0) {
+    if (countdownSpan) countdownSpan.textContent = countdownValue;
+  } else {
+    clearInterval(startTimer);
+    if (waitingMessage) {
+      waitingMessage.innerHTML = "Les nouveaux posts s'affichent toutes les 5 secondes.";
+      // optionnel pour le rendre un peu plus discret après le compte à rebours
+      waitingMessage.style.background = "rgba(2, 4, 8, 0.7)";
+      waitingMessage.style.border = "1px solid #334155";
+    }
+  }
+}, 1000);
