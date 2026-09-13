@@ -3,8 +3,11 @@ FROM python:3.11-slim
 WORKDIR /app
 ENV PYTHONPATH=/app
 
+# Ajout de git et git-lfs dans le conteneur
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    git \
+    git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
 COPY deployment/requirements-inference.txt ./deployment/requirements-inference.txt
