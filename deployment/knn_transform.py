@@ -23,19 +23,14 @@ class NeighborProjector:
     def __init__(self, checkpoints_dir: Path, k: int = 15):
         self.k = k
 
-        # Loaded once as float32, normalized in place, then downcast to
-        # float16 — only ONE copy of the (N, 768) array is ever kept in
-        # memory (previously this kept both the raw and normalized copies,
-        # doubling RAM usage — a likely contributor to the OOM).
-        embeddings = np.load(checkpoints_dir / "static_embeddings.npy").astype(np.float32)
+        # Chargement ultra-rapide via memory mapping sans allocation massive
+        embeddings = np.load(checkpoints_dir / "static_embeddings.npy", mmap_mode="r").astype(np.float32)
         norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
         norms = np.clip(norms, 1e-9, None)
-        embeddings /= norms  # in-place normalization, no second allocation
+        normalized = embeddings / norms
 
-        self._normalized = embeddings.astype(np.float16)  # ~67MB instead of ~268MB
-        del embeddings
-
-        self.projections = np.load(checkpoints_dir / "static_projections.npy")  # (N, 3)
+        self._normalized = normalized.astype(np.float16)
+        self.projections = np.load(checkpoints_dir / "static_projections.npy")
 
     def transform(self, query_embedding: np.ndarray) -> list:
         """query_embedding: shape (768,) or (1, 768). Returns [x, y, z]."""
