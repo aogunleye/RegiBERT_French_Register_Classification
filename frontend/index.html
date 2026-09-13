@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RegiBERT 3D</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   
   <script type="importmap">
     {
@@ -29,21 +29,13 @@
       </div>
     </header>
 
-    <div id="hud-flow"></div>
-
-    <button id="info-tab" class="side-tab side-tab-left" aria-label="Ouvrir les infos du projet">ℹ</button>
-    <button id="card-tab" class="side-tab side-tab-right" aria-label="Ouvrir le dernier post">💬</button>
-
-    <!-- post information panel -->
     <div id="card" class="card hidden">
       <div class="card-header">
         <span id="post-id" class="post-id">#000000</span>
-        <span id="post-type" class="post-type">Live stream</span>
-        <button id="card-close" class="panel-close" aria-label="Fermer">×</button>
+        <span id="post-type" class="post-type">Live Stream</span>
       </div>
       <p id="post-text" class="post-text">Survolez un point ou attendez un nouveau post...</p>
       
-      <!-- probability bars -->
       <div class="probs-container">
         <div class="prob-row">
           <span class="label">Soutenu</span>
@@ -63,8 +55,11 @@
       </div>
     </div>
 
+    <button id="info-tab" class="mobile-tab left-tab" title="Informations"><span class="material-icons">info_outline</span></button>
+    <button id="card-tab" class="mobile-tab right-tab" title="Dernier Post"><span class="material-icons">chat</span></button>
+
     <div id="waiting-message" class="waiting-message">
-      Chargement... les premiers posts arrivent dans <span id="countdown">5</span>s
+      En attente du premier post dans <span id="countdown">5</span>...
     </div>
   </div>
 
