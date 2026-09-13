@@ -14,7 +14,7 @@ COPY config.py .
 COPY backend/ ./backend/
 COPY deployment/ ./deployment/
 
-COPY checkpoints/umap_3d.joblib ./checkpoints/umap_3d.joblib
+COPY deployment/checkpoints/umap_3d.joblib ./checkpoints/umap_3d.joblib
 
 ENV PORT=8000
 EXPOSE 8000
