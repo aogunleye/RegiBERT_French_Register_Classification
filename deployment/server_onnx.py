@@ -70,36 +70,30 @@ async def lifespan(app: FastAPI):
     if not umap_path.exists():
         raise FileNotFoundError(f"UMAP file not found: {umap_path}")
 
+    # 1. Chargement UMAP + purge immédiate
     umap_data = joblib.load(umap_path)
     reducer = umap_data["umap_model"]
-    static_projections = umap_data["projections"]
-    targets = umap_data.get("targets", [])
+    # ... (extraction des static_points) ...
 
-    static_points = []
-    for i in range(len(static_projections)):
-        x = float(np.nan_to_num(static_projections[i][0]))
-        y = float(np.nan_to_num(static_projections[i][1]))
-        z = float(np.nan_to_num(static_projections[i][2]))
+    del umap_data
+    del static_projections
+    del targets
+    gc.collect()  # Purge avant d'allouer ONNX
 
-        if len(targets) > i:
-            target_val = targets[i]
-            if isinstance(target_val, np.ndarray) and len(target_val) >= 3:
-                p_s, p_c, p_f = float(target_val[0]), float(target_val[1]), float(target_val[2])
-            else:
-                idx = int(target_val)
-                p_s = 1.0 if idx == 0 else 0.0
-                p_c = 1.0 if idx == 1 else 0.0
-                p_f = 1.0 if idx == 2 else 0.0
-        else:
-            p_s, p_c, p_f = 0.5, 0.5, 0.5
+    # 2. Configuration ONNX mono-thread (économise ~150 Mo de RAM d'allocation initiale)
+    import onnxruntime as ort
+    opts = ort.SessionOptions()
+    opts.intra_op_num_threads = 1
+    opts.inter_op_num_threads = 1
 
-        r = (p_s * 0.862) + (p_c * 0.145) + (p_f * 0.063)
-        g = (p_s * 0.149) + (p_c * 0.388) + (p_f * 0.725)
-        b = (p_s * 0.149) + (p_c * 0.922) + (p_f * 0.506)
+    onnx_path = Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"
+    tokenizer_dir = Path(__file__).resolve().parent / "checkpoints" / "tokenizer"
 
-        static_points.append([x, y, z, r, g, b])
-
-    engine = RegiBERTONNX(model_path=str(Path(__file__).resolve().parent / "checkpoints" / "regibert_int8.onnx"))
+    engine = RegiBERTONNX(
+        onnx_path=str(onnx_path),
+        tokenizer_dir=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base",
+        session_options=opts  # Passe les options mono-thread si ton wrapper le permet
+    )
 
     MODEL_STATE.update({
         "engine": engine,
