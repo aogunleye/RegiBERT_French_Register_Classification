@@ -17,4 +17,8 @@ COPY deployment/ ./deployment/
 ENV PORT=8000
 EXPOSE 8000
 
+
+ENV NUMBA_CACHE_DIR=/tmp/numba_cache
+ENV NUMBA_NUM_THREADS=1
+ENV NUMBA_THREADING_LAYER=workqueue
 CMD ["sh", "-c", "uvicorn deployment.server_onnx:app --host 0.0.0.0 --port ${PORT}"]

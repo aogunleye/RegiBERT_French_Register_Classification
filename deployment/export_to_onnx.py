@@ -1,18 +1,3 @@
-"""
-Exports the trained RegiBERT model (CamemBERT backbone + linear projection
-head) to ONNX for lightweight, PyTorch-free inference in production.
-
-Confirmed against model.py:
-  - model.forward(input_ids, attention_mask) returns (logprobs, embeddings)
-  - logprobs has shape (batch, 3), in the order [Soutenu, Courant, Familier]
-    (matches dataset.py's label_cols)
-  - Internally: CamemBERT -> attention-mask-weighted mean pooling -> linear
-    head -> log_softmax
-
-Run from the project root (same folder as config.py / model.py):
-    python export_to_onnx.py
-"""
-
 import sys
 from pathlib import Path
 
