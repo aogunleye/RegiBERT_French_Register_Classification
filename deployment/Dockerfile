@@ -15,7 +15,6 @@ COPY config.py .
 COPY backend/ ./backend/
 COPY deployment/ ./deployment/
 
-# Téléchargement propre de tous les fichiers (modèle + projections + tokenizer)
 ARG HF_REPO_ID=aogunleye/regibert-deployment
 RUN pip install --no-cache-dir huggingface_hub && \
     python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='${HF_REPO_ID}', local_dir='deployment/checkpoints')"

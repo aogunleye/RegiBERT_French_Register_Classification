@@ -35,20 +35,15 @@ def compute_rgb(probs: dict) -> list:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting server (ONNX Runtime + numpy k-NN, no umap-learn)...")
+    print("LOG: Starting server lifespan...", flush=True)
 
     checkpoints_dir = Path(__file__).resolve().parent / "checkpoints"
-    required_files = ["static_embeddings.npy", "static_projections.npy", "static_targets.npy"]
-    for fname in required_files:
-        if not (checkpoints_dir / fname).exists():
-            raise FileNotFoundError(
-                f"{fname} not found in {checkpoints_dir}. "
-                "Run extract_neighbors_data.py locally first."
-            )
-
+    
+    print("LOG: Loading numpy targets and projections...", flush=True)
     targets = np.load(checkpoints_dir / "static_targets.npy")
     projections = np.load(checkpoints_dir / "static_projections.npy")
 
+    print("LOG: Building static points array...", flush=True)
     static_points = []
     for i in range(len(projections)):
         x = float(np.nan_to_num(projections[i][0]))
@@ -73,12 +68,14 @@ async def lifespan(app: FastAPI):
 
         static_points.append([x, y, z, r, g, b])
 
+    print("LOG: Initializing ONNX Engine...", flush=True)
     tokenizer_dir = checkpoints_dir / "tokenizer"
-
     engine = RegiBERTONNX(
         model_path=str(checkpoints_dir / "regibert_int8.onnx"),
         tokenizer_name_or_path=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
     )
+
+    print("LOG: Initializing NeighborProjector (k-NN)...", flush=True)
     projector = NeighborProjector(checkpoints_dir, k=15)
 
     MODEL_STATE.update({
@@ -87,13 +84,15 @@ async def lifespan(app: FastAPI):
         "static_projections": static_points,
     })
 
+    print("LOG: Starting background Bluesky streamer...", flush=True)
     streamer = BlueskyStreamer(output_queue=post_queue, interval_seconds=10.0)
     asyncio.create_task(streamer.start())
     asyncio.create_task(inference_worker())
 
+    print("LOG: Server startup complete and operational!", flush=True)
     yield
 
-    print("Shutting down server and freeing up resources...")
+    print("Shutting down server...")
     MODEL_STATE.clear()
 
 
@@ -102,6 +101,11 @@ app = FastAPI(
     description="fastapi server for live inference and 3D visualization of Bluesky posts in french (ONNX Runtime)",
     lifespan=lifespan,
 )
+
+@app.get("/")
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "message": "RegiBERT 3D ONNX Server is running"}
 
 # TODO: restrict to your actual frontend origin(s), instead of "*".
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
