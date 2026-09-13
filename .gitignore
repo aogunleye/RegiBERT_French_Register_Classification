@@ -18,4 +18,5 @@ resultats_ph2.txt
 .idea/
 
 deployment/.env
+deployment/checkpoints/
 deployment/__pycache__/

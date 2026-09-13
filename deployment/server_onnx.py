@@ -1,17 +1,17 @@
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
-import gc
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 import asyncio
-import joblib
 import numpy as np
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
-import config
 from backend.stream import BlueskyStreamer
 from .inference_onnx import RegiBERTONNX
+from .knn_transform import NeighborProjector
 
 post_queue = asyncio.Queue(maxsize=50)
 MODEL_STATE = {}
@@ -35,29 +35,26 @@ def compute_rgb(probs: dict) -> list:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting server...")
+    print("Starting server (ONNX Runtime + numpy k-NN, no umap-learn)...")
 
     checkpoints_dir = Path(__file__).resolve().parent / "checkpoints"
-    
-    reducer_path = checkpoints_dir / "umap_reducer.joblib"
-    proj_path = checkpoints_dir / "static_projections.npy"
-    targets_path = checkpoints_dir / "static_targets.npy"
+    required_files = ["static_embeddings.npy", "static_projections.npy", "static_targets.npy"]
+    for fname in required_files:
+        if not (checkpoints_dir / fname).exists():
+            raise FileNotFoundError(
+                f"{fname} not found in {checkpoints_dir}. "
+                "Run extract_neighbors_data.py locally first."
+            )
 
-    if not reducer_path.exists() or not proj_path.exists():
-        raise FileNotFoundError(f"Files not found {checkpoints_dir}")
-
-    reducer_data = joblib.load(reducer_path)
-    reducer = reducer_data["umap_model"] if isinstance(reducer_data, dict) else reducer_data
-
-    static_projections = np.load(proj_path)
-    targets = np.load(targets_path) if targets_path.exists() else []
+    targets = np.load(checkpoints_dir / "static_targets.npy")
+    projections = np.load(checkpoints_dir / "static_projections.npy")
 
     static_points = []
-    for i in range(len(static_projections)):
-        x = float(np.nan_to_num(static_projections[i][0]))
-        y = float(np.nan_to_num(static_projections[i][1]))
-        z = float(np.nan_to_num(static_projections[i][2]))
-        
+    for i in range(len(projections)):
+        x = float(np.nan_to_num(projections[i][0]))
+        y = float(np.nan_to_num(projections[i][1]))
+        z = float(np.nan_to_num(projections[i][2]))
+
         if len(targets) > i:
             target_val = targets[i]
             if isinstance(target_val, np.ndarray) and len(target_val) >= 3:
@@ -76,24 +73,12 @@ async def lifespan(app: FastAPI):
 
         static_points.append([x, y, z, r, g, b])
 
-    del static_projections
-    del targets
-    gc.collect()
-
-    onnx_path = checkpoints_dir / "regibert_int8.onnx"
-    tokenizer_dir = checkpoints_dir / "tokenizer"
-
-    if not onnx_path.exists():
-        onnx_path = checkpoints_dir / "regibert.onnx"
-
-    engine = RegiBERTONNX(
-        model_path=str(onnx_path),
-        tokenizer_name_or_path=str(tokenizer_dir) if tokenizer_dir.exists() else "camembert-base"
-    )
+    engine = RegiBERTONNX(model_path=str(checkpoints_dir / "regibert_int8.onnx"))
+    projector = NeighborProjector(checkpoints_dir, k=15)
 
     MODEL_STATE.update({
         "engine": engine,
-        "reducer": reducer,
+        "projector": projector,
         "static_projections": static_points,
     })
 
@@ -113,8 +98,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# TODO: restrict to your actual frontend origin(s) before/after going live,
-# e.g. ["https://your-username.github.io"], instead of "*".
+# TODO: restrict to your actual frontend origin(s), instead of "*".
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
@@ -124,11 +108,10 @@ async def inference_worker():
         text = item["text"]
 
         engine = MODEL_STATE["engine"]
-        reducer = MODEL_STATE["reducer"]
+        projector = MODEL_STATE["projector"]
 
         probs, pooled_embedding = engine.predict_with_embedding(text)
-
-        coords_3d = reducer.transform(pooled_embedding.reshape(1, -1))[0].tolist()
+        coords_3d = projector.transform(pooled_embedding)
         rgb = compute_rgb(probs)
 
         post_url = f"https://bsky.app/profile/{item.get('author')}/post/{item.get('rkey')}"
