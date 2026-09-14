@@ -111,12 +111,22 @@ projectInfoHUD.innerHTML = `
     <p>Pour plus d'informations sur ma démarche, les méthodes, les outils, les données, le modèle etc., consultez le <a href="https://github.com/aogunleye/RegiBERT_French_Register_Classification/" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: bold;">dépôt GitHub</a>.</p>
 
     <div style="margin-top: 18px; margin-bottom: 8px; font-weight: bold; color: #0ea5e9; font-size: 12px; border-bottom: 1px dashed #334155; padding-bottom: 4px;">
+      UTILISATION
+    </div>
+    
+    <ul style="margin: 0; padding-left: 16px; color: #cbd5e1; font-size: 11.5px; line-height: 1.6;">
+      <li style="margin-bottom: 6px;"><b>PC :</b> Survolez une sphère pour lire le post associé et ses statistiques. Double-cliquez dessus pour l'ouvrir sur Bluesky. Utilisez les boutons en haut de l'écran pour filtrer le nuage de fond par registre.</li>
+      <li style="margin-bottom: 6px;"><b>Mobile :</b> Touchez une sphère pour lire le post associé et ses statistiques. Vous y trouverez un lien pour voir le post original. Utilisez les languettes latérales pour naviguer entre les panneaux.</li>
+      <li><b>Navigation 3D :</b> Cliquez-glissez (ou touchez-glissez) pour faire pivoter la caméra, utilisez la molette (ou le pincement) pour zoomer.</li>
+    </ul>
+
+    <div style="margin-top: 18px; margin-bottom: 8px; font-weight: bold; color: #0ea5e9; font-size: 12px; border-bottom: 1px dashed #334155; padding-bottom: 4px;">
       DESCRIPTION VISUELLE
     </div>
     
     <ul style="margin: 0; padding-left: 16px; color: #cbd5e1; font-size: 11.5px; line-height: 1.6;">
-      <li style="margin-bottom: 6px;"><b>Le nuage de fond</b> représente les <span id="static-count" style="color: #0ea5e9; font-weight: bold;">...</span> tweets du jeu d'entraînement. Il est possible de filtrer l'affichage des nuages par couleur avec les boutons en haut.</li>
-      <li style="margin-bottom: 6px;"><b>Les sphères néons</b> sont les posts du flux Bluesky en direct. Le double-clic redirige vers le post d'origine. Ces points sont les prédictions du modèle. Au bout de 500 posts, quand une nouvelle sphère apparaît, la plus ancienne disparaît.</li>
+      <li style="margin-bottom: 6px;"><b>Le nuage de fond</b> représente les <span id="static-count" style="color: #0ea5e9; font-weight: bold;">...</span> tweets du jeu d'entraînement.</li>
+      <li style="margin-bottom: 6px;"><b>Les sphères néons</b> sont les posts du flux Bluesky en direct. Ce sont les prédictions en temps réel du modèle. Au bout de 500 posts, la sphère la plus ancienne disparaît.</li>
       <li style="margin-bottom: 6px;"><b>Les couleurs</b> sont déterminées par un mix des probabilités d'appartenance à chaque catégorie : <br><span style="color:#ef4444; font-weight:bold;">rouge = soutenu</span>, <span style="color:#3b82f6; font-weight:bold;">bleu = courant</span>, <span style="color:#10b981; font-weight:bold;">vert = familier</span>. Par exemple un post 20% familier, 40% courant et 40% soutenu aura une couleur plutôt mauve.</li>
       <li><b>Les coordonnées</b> délimitent le plus petit cube capable d'enfermer tous les points du jeu d'entraînement.</li>
     </ul>
@@ -391,6 +401,16 @@ function updateHUDCard(data) {
     card.classList.remove('hidden');
   }
 
+  const postLink = document.getElementById('post-link');
+  if (postLink) {
+    if (data.url) {
+      postLink.href = data.url;
+    } else {
+      const query = encodeURIComponent(`"${data.text}"`);
+      postLink.href = `https://bsky.app/search?q=${query}`;
+    }
+  }
+
   let dateText = "";
   if (data.created_at) {
     const d = new Date(data.created_at);
@@ -434,10 +454,6 @@ function checkIntersections() {
   if (intersects.length > 0) {
     document.body.style.cursor = 'pointer';
     updateHUDCard(intersects[0].object.userData);
-    if (window.innerWidth <= 800) {
-       card.classList.remove('hidden');
-       card.classList.add('mobile-open');
-    }
   } else {
     document.body.style.cursor = 'default';
   }
@@ -519,7 +535,7 @@ if (infoClose) {
 
 if (cardTab) {
   cardTab.addEventListener('click', () => {
-    card.classList.remove('hidden'); // On force le retrait du mode caché
+    card.classList.remove('hidden'); 
     card.classList.toggle('mobile-open');
     if (projectInfoElement) projectInfoElement.classList.remove('mobile-open'); 
   });
@@ -533,3 +549,21 @@ if (cardClose) {
     event.stopPropagation();
   });
 }
+
+window.addEventListener('pointerdown', (event) => {
+  if (event.target.closest('#hud')) return;
+
+  if (window.innerWidth <= 800) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(livePostsData);
+    
+    if (intersects.length > 0) {
+      card.classList.remove('hidden');
+      card.classList.add('mobile-open');
+      updateHUDCard(intersects[0].object.userData);
+    }
+  }
+});

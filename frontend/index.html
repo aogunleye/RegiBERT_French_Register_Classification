@@ -37,7 +37,12 @@
         </div>
         <button id="card-close" class="panel-close" aria-label="Fermer" style="background:none; border:none; color:white; font-size:20px; cursor:pointer; line-height: 1;">×</button>
       </div>
-      <p id="post-text" class="post-text">Survolez un point ou attendez un nouveau post...</p>
+      
+      <p id="post-text" class="post-text">Survolez/cliquez un point ou attendez un nouveau post...</p>
+      
+      <a id="post-link" href="#" target="_blank" style="color: #0ea5e9; font-size: 12px; text-decoration: none; display: flex; align-items: center; gap: 4px; width: fit-content; pointer-events: auto;">
+        <span class="material-icons" style="font-size: 14px;">open_in_new</span> Voir sur Bluesky
+      </a>
       
       <div class="probs-container">
         <div class="prob-row">
@@ -59,7 +64,7 @@
     </div>
 
     <button id="info-tab" class="mobile-tab left-tab" title="Informations"><span class="material-icons">info_outline</span></button>
-    <button id="card-tab" class="mobile-tab right-tab" title="Dernier Post"><span class="material-icons">comment</span></button>
+    <button id="card-tab" class="mobile-tab right-tab" title="Dernier post"><span class="material-icons">comment</span></button>
 
     <div id="waiting-message" class="waiting-message">
       En attente du premier post dans <span id="countdown">5</span>...

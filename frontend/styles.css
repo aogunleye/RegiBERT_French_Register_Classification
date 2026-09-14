@@ -297,17 +297,22 @@ h1 {
     left: 0 !important;
     top: 50% !important;
     transform: translate(-120%, -50%) !important;
-    max-height: 60vh !important;
+    max-height: 85vh !important;
     padding: 16px !important;
     opacity: 0 !important;
     transition: transform 0.3s ease, opacity 0.3s ease !important;
     pointer-events: none !important;
+    overflow-y: auto !important;
   }
 
   #project-info.mobile-open {
     transform: translate(48px, -50%) !important;
     opacity: 1 !important;
     pointer-events: auto !important;
+  }
+  
+  .cyber-scroll {
+    max-height: 60vh !important;
   }
 
   .card {
