@@ -358,7 +358,7 @@ Then open `http://localhost:5500` in your browser.
 
 ### Notebook
 
-**If you just want to test it quickly :** [Open in Colab](https://colab.research.google.com/github.com/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb)
+**If you just want to test it quickly :** [Open in Colab](https://colab.research.google.com/github.com/aogunleye/RegiBERT_French_Register_Classification/blob/main/RegiBERT_inference.ipynb)
 
 If you’re using Google Colab, enable a GPU accelerator (`Run` > `Change run type` > `GPU T4`)
 
