@@ -332,7 +332,7 @@ pip install -r dependencies.txt
 3. **Layer-wise probing:** `python src/probe_layers.py`
 4. **Calibrate 3D UMAP:** `python src/fit_umap.py`
 
-*For live interactive testing without local setup, open [`inference.ipynb`](https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb) directly in Google Colab.*
+*For live interactive testing without local setup, open [`RegiBERT_inference.ipynb`](https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/RegiBERT_inference.ipynb) directly in Google Colab.*
 
 ### Live Bluesky streaming
 
