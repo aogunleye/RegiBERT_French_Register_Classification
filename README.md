@@ -19,6 +19,7 @@
 <h4 align="center">
   Open in Colab <a href="https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/RegiBERT_inference.ipynb">here <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg" width="12" height="12" alt="external link"></a>
 </h4>
+
 ---
 
 ## 1. Abstract
