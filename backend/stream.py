@@ -4,9 +4,10 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 import asyncio
 import time
 from atproto import (AsyncFirehoseSubscribeReposClient, parse_subscribe_repos_message, models, CAR)
+from langdetect import detect, LangDetectException
 
 class BlueskyStreamer:
-    def __init__(self, output_queue: asyncio.Queue, interval_seconds: float = 10.0):
+    def __init__(self, output_queue: asyncio.Queue, interval_seconds: float = 5.0):
         self.queue = output_queue
         self.interval_seconds = interval_seconds
         self.last_processed_time = 0.0
@@ -38,6 +39,13 @@ class BlueskyStreamer:
 
             text = getattr(record, 'text', '').strip()
             if not text or len(text) < 10:
+                continue
+
+            try:
+                detected_lang = detect(text)
+                if detected_lang != 'fr':
+                    continue
+            except LangDetectException:
                 continue
 
             now = time.time()
