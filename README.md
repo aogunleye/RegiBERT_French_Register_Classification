@@ -16,6 +16,9 @@
   Try the deployed live app <a href="https://aogunleye.github.io/RegiBERT_French_Register_Classification/frontend/">here <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg" width="12" height="12" alt="external link"></a>
 </h4>
 
+<h4 align="center">
+  Open in Colab <a href="https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/RegiBERT_inference.ipynb">here <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Icon_External_Link.svg" width="12" height="12" alt="external link"></a>
+</h4>
 
 ---
 
@@ -332,8 +335,6 @@ pip install -r dependencies.txt
 3. **Layer-wise probing:** `python src/probe_layers.py`
 4. **Calibrate 3D UMAP:** `python src/fit_umap.py`
 
-*For live interactive testing without local setup, open [`inference.ipynb`](https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb) directly in Google Colab.*
-
 ### Live Bluesky streaming
 
 > **Live demo:** Try the [deployed web application](https://aogunleye.github.io/RegiBERT_French_Register_Classification/frontend/)
@@ -358,7 +359,7 @@ Then open `http://localhost:5500` in your browser.
 
 ### Notebook
 
-**If you just want to test it quickly :** [Open in Colab](https://colab.research.google.com/github.com/aogunleye/RegiBERT_French_Register_Classification/blob/main/inference.ipynb)
+**If you just want to test it quickly :** [Open in Colab](https://colab.research.google.com/github/aogunleye/RegiBERT_French_Register_Classification/blob/main/RegiBERT_inference.ipynb)
 
 If you’re using Google Colab, enable a GPU accelerator (`Run` > `Change run type` > `GPU T4`)
 
