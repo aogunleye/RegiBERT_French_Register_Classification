@@ -5,3 +5,4 @@ transformers
 numpy
 atproto
 sentencepiece
+langdetect
