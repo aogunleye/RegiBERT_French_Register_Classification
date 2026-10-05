@@ -1,3 +1,4 @@
+import gc
 import sys
 from pathlib import Path
 from contextlib import asynccontextmanager
@@ -67,6 +68,9 @@ async def lifespan(app: FastAPI):
         b = (p_s * 0.149) + (p_c * 0.922) + (p_f * 0.506)
 
         static_points.append([x, y, z, r, g, b])
+
+    del targets, projections
+    gc.collect()
 
     print("LOG: Initializing ONNX Engine...", flush=True)
     tokenizer_dir = checkpoints_dir / "tokenizer"
