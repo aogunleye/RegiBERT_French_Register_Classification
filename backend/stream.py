@@ -66,6 +66,11 @@ class BlueskyStreamer:
             
             try:
                 self.queue.put_nowait(item)
+                
+                extrait = text[:50].replace('\n', ' ') + "..." if len(text) > 50 else text.replace('\n', ' ')
+                short_author = item['author'].replace('did:plc:', '')[:8]
+                print(f"✅ [FIREHOSE] Post capté de @{short_author} -> {extrait}")
+                
             except asyncio.QueueFull:
                 pass
 
