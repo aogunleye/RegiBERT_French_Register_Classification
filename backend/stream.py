@@ -4,6 +4,8 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 import asyncio
 import time
 from atproto import (AsyncFirehoseSubscribeReposClient, parse_subscribe_repos_message, models, CAR)
+from atproto_client.exceptions import ModelError
+from pydantic import ValidationError
 from langdetect import detect, LangDetectException
 
 class BlueskyStreamer:
@@ -29,7 +31,12 @@ class BlueskyStreamer:
             if not raw_record:
                 continue
 
-            record = models.get_or_create(raw_record, models.AppBskyFeedPost.Record)
+            try:
+                record = models.get_or_create(raw_record, models.AppBskyFeedPost.Record)
+            except (ModelError, ValidationError):
+                continue
+            except Exception:
+                continue
             if not record or not isinstance(record, models.AppBskyFeedPost.Record):
                 continue
 
