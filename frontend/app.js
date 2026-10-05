@@ -392,7 +392,7 @@ function connectWebSocket() {
       
       if (statusText.textContent === 'En direct' && waitingMessage) {
         if (waitingText) waitingText.innerHTML = "Les nouveaux posts s'affichent toutes les 5 secondes.";
-        if (progressBar) progressBar.parentElement.style.display = 'none'; // Cache la barre
+        if (progressBar) progressBar.parentElement.style.display = 'none';
         
         waitingMessage.style.background = "rgba(2, 4, 8, 0.7)";
         waitingMessage.style.border = "1px solid #334155";
@@ -407,7 +407,7 @@ function connectWebSocket() {
     statusBadge.className = 'badge disconnected';
     statusText.textContent = 'Déconnecté';
     
-    if (progressBar) progressBar.parentElement.style.display = 'block'; // Réaffiche la barre
+    if (progressBar) progressBar.parentElement.style.display = 'block';
     
     setWaitingStage("Connexion en cours... ça peut prendre quelques instants.<br><span style='font-size: 10px; font-style: italic; opacity: 0.8;'>(Hébergement gratuit oblige, le serveur fait de son mieux...)</span>", 0);
     
