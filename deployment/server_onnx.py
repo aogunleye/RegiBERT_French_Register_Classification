@@ -142,7 +142,7 @@ async def inference_worker():
         }
 
         if CONNECTED_CLIENTS:
-            await asyncio.gather(*[ws.send_json(payload) for ws in CONNECTED_CLIENTS])
+            await asyncio.gather(*[ws.send_json(payload) for ws in CONNECTED_CLIENTS], return_exceptions=True)
 
         post_queue.task_done()
 
