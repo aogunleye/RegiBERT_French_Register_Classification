@@ -379,7 +379,11 @@ function addLivePostMarker(postData) {
 
 function connectWebSocket() {
   ws = new WebSocket(WS_URL);
-  ws.onopen = () => { statusBadge.className = 'badge connected'; statusText.textContent = 'En direct'; };
+  ws.onopen = () => {
+    statusBadge.className = 'badge connected';
+    statusText.textContent = 'En direct';
+    if (waitingMessage) waitingMessage.style.display = 'none';
+  };
   
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -390,7 +394,15 @@ function connectWebSocket() {
     }
   };
   
-  ws.onclose = () => { statusBadge.className = 'badge disconnected'; statusText.textContent = 'Déconnecté'; setTimeout(connectWebSocket, 3000); };
+  ws.onclose = () => {
+    statusBadge.className = 'badge disconnected';
+    statusText.textContent = 'Déconnecté';
+    if (waitingMessage) {
+      waitingMessage.style.display = '';
+      waitingMessage.textContent = "Connexion en cours... cela peut prendre quelques instants.";
+    }
+    setTimeout(connectWebSocket, 3000);
+  };
   ws.onerror = (err) => { ws.close(); };
 }
 
@@ -497,22 +509,6 @@ initScene();
 connectWebSocket();
 
 const waitingMessage = document.getElementById('waiting-message');
-const countdownSpan = document.getElementById('countdown');
-let countdownValue = 5;
-
-const startTimer = setInterval(() => {
-  countdownValue--;
-  if (countdownValue > 0) {
-    if (countdownSpan) countdownSpan.textContent = countdownValue;
-  } else {
-    clearInterval(startTimer);
-    if (waitingMessage) {
-      waitingMessage.innerHTML = "Les nouveaux posts s'affichent toutes les 5 secondes.";
-      waitingMessage.style.background = "rgba(2, 4, 8, 0.7)";
-      waitingMessage.style.border = "1px solid #334155";
-    }
-  }
-}, 1000);
 
 const infoTab = document.getElementById('info-tab');
 const cardTab = document.getElementById('card-tab');
