@@ -380,15 +380,24 @@ function addLivePostMarker(postData) {
 function connectWebSocket() {
   ws = new WebSocket(WS_URL);
   ws.onopen = () => {
-    statusBadge.className = 'badge connected';
-    statusText.textContent = 'En direct';
-    if (waitingMessage) waitingMessage.style.display = 'none';
-  };
-  
+  statusBadge.className = 'badge connected';
+  statusText.textContent = 'En direct';
+  setWaitingStage("Chargement de la carte des registres...", 60);
+};
+
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.type === 'init_background') {
       createBackgroundCloud(data.points);
+      
+      if (statusText.textContent === 'En direct' && waitingMessage) {
+        if (waitingText) waitingText.innerHTML = "Les nouveaux posts s'affichent toutes les 5 secondes.";
+        if (progressBar) progressBar.parentElement.style.display = 'none'; // Cache la barre
+        
+        waitingMessage.style.background = "rgba(2, 4, 8, 0.7)";
+        waitingMessage.style.border = "1px solid #334155";
+      }
+      
     } else if (data.type === 'new_post') {
       addLivePostMarker(data);
     }
@@ -397,10 +406,16 @@ function connectWebSocket() {
   ws.onclose = () => {
     statusBadge.className = 'badge disconnected';
     statusText.textContent = 'Déconnecté';
+    
+    if (progressBar) progressBar.parentElement.style.display = 'block'; // Réaffiche la barre
+    
+    setWaitingStage("Connexion en cours... ça peut prendre quelques instants.<br><span style='font-size: 10px; font-style: italic; opacity: 0.8;'>(Hébergement gratuit oblige, le serveur fait de son mieux...)</span>", 0);
+    
     if (waitingMessage) {
-      waitingMessage.style.display = '';
-      waitingMessage.textContent = "Connexion en cours... cela peut prendre quelques instants.";
+      waitingMessage.style.background = "rgba(14, 165, 233, 0.15)";
+      waitingMessage.style.border = "1px dashed rgba(14, 165, 233, 0.5)";
     }
+    
     setTimeout(connectWebSocket, 3000);
   };
   ws.onerror = (err) => { ws.close(); };
@@ -509,6 +524,14 @@ initScene();
 connectWebSocket();
 
 const waitingMessage = document.getElementById('waiting-message');
+
+const waitingText = document.getElementById('waiting-text');
+const progressBar = document.getElementById('progress-bar');
+
+function setWaitingStage(text, percent) {
+  if (waitingText) waitingText.innerHTML = text;
+  if (progressBar) progressBar.style.width = `${percent}%`;
+}
 
 const infoTab = document.getElementById('info-tab');
 const cardTab = document.getElementById('card-tab');
